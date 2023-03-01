@@ -5,7 +5,6 @@
 Buffer::Buffer(int weight, int height)
 {
 	SetSize(weight, height);
-	color = new unsigned int[size];
 }
 
 bool Buffer::Save()
@@ -23,6 +22,7 @@ bool Buffer::Save()
 
 	fwrite(header, 2, 9, f);
 	fwrite(color, 4, size, f);
+	return true;
 }
 
 void Buffer::SetSize(int width, int height)
