@@ -25,6 +25,31 @@ bool Buffer::Save()
 	return true;
 }
 
+void Buffer::Triangle(float2 posX, float2 posY, float2 posZ)
+{
+	float x, y;
+	for (int collumn = 0; collumn < h; collumn++) 
+	{
+		for (int row = 0; row < w; row++)
+		{
+			x = (row + 1) * w * 0.5f;
+			y = (collumn + 1) * h * 0.5f;
+			if ( (posX.x - posY.x) * (y - posX.y) - (posX.y - posY.y) * (x - posX.x) > 0
+			&&   (posY.x - posZ.x) * (y - posY.y) - (posY.y - posZ.y) * (x - posY.x) > 0
+			&&   (posZ.x - posX.x) * (y - posZ.y) - (posZ.y - posX.y) * (x - posZ.x) > 0
+				)
+			{
+				color[collumn * w + row] = 0xFFFF0000;
+			}
+		}
+	}
+
+	// Checkboard coloring check
+	//for (int i = 0; i < size; i+=2) {
+	//	color[i] = 0xFFFF0000;
+	//}
+}
+
 void Buffer::SetSize(int width, int height)
 {
 	w = width;
@@ -40,3 +65,7 @@ void Buffer::ClearColor(unsigned int pickedColor)
 		color[i] = pickedColor;
 	}
 }
+
+// if ((posX.x - posY.x) * (/*y*/ -posX.y) - (posX.y - posY.y) * (/*x*/ -posX.x) > 0) {}
+// if ((posY.x - posZ.x) * (/*y*/ -posY.y) - (posY.y - posZ.y) * (/*x*/ -posY.x) > 0) {}
+// if ((posZ.x - posX.x) * (/*y*/ -posZ.y) - (posZ.y - posX.y) * (/*x*/ -posZ.x) > 0) {}

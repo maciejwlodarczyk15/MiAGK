@@ -1,4 +1,6 @@
 #pragma once
+#include "NTypes.h"
+
 class Buffer
 {
 private:
@@ -14,5 +16,7 @@ public:
 	void ClearColor(unsigned int pickedColor);
 
 	bool Save();
+
+	void Triangle(float2 posX, float2 posY, float2 posZ);
 };
 
