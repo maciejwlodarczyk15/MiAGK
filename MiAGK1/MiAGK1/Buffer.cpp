@@ -1,6 +1,9 @@
 #define _CRT_SECURE_NO_WARNINGS 1
 #include "Buffer.h"
 #include <cstdio>
+#include <corecrt_math.h>
+#include <utility>
+#include <iostream>
 
 Buffer::Buffer(int weight, int height)
 {
@@ -25,31 +28,6 @@ bool Buffer::Save()
 	return true;
 }
 
-void Buffer::Triangle(float2 posX, float2 posY, float2 posZ)
-{
-	float x, y;
-	for (int collumn = 0; collumn < h; collumn++) 
-	{
-		for (int row = 0; row < w; row++)
-		{
-			x = (row + 1) * w * 0.5f;
-			y = (collumn + 1) * h * 0.5f;
-			if ( (posX.x - posY.x) * (y - posX.y) - (posX.y - posY.y) * (x - posX.x) > 0
-			&&   (posY.x - posZ.x) * (y - posY.y) - (posY.y - posZ.y) * (x - posY.x) > 0
-			&&   (posZ.x - posX.x) * (y - posZ.y) - (posZ.y - posX.y) * (x - posZ.x) > 0
-				)
-			{
-				color[collumn * w + row] = 0xFFFF0000;
-			}
-		}
-	}
-
-	// Checkboard coloring check
-	//for (int i = 0; i < size; i+=2) {
-	//	color[i] = 0xFFFF0000;
-	//}
-}
-
 void Buffer::SetSize(int width, int height)
 {
 	w = width;
@@ -66,6 +44,44 @@ void Buffer::ClearColor(unsigned int pickedColor)
 	}
 }
 
-// if ((posX.x - posY.x) * (/*y*/ -posX.y) - (posX.y - posY.y) * (/*x*/ -posX.x) > 0) {}
-// if ((posY.x - posZ.x) * (/*y*/ -posY.y) - (posY.y - posZ.y) * (/*x*/ -posY.x) > 0) {}
-// if ((posZ.x - posX.x) * (/*y*/ -posZ.y) - (posZ.y - posX.y) * (/*x*/ -posZ.x) > 0) {}
+// Color half of the screen
+void Buffer::ColorHalf(float2 v1, float2 v2, unsigned int pickedColor)
+{
+	for (int y = 0; y < h; y++) 
+	{
+		for (int x = 0; x < w; x++) 
+		{
+			float f = (v2.x - v1.x) * (y - v1.y) - (v2.y - v1.y) * (x - v1.x);
+
+			if (f < 0)
+			{
+				color[y * w + x] = pickedColor;
+			}
+		}
+	}
+}
+
+void Buffer::Triangle(float2 v1, float2 v2, float2 v3, unsigned int pickedColor)
+{
+	float x1 = (v1.x + 1.0f) * w * 0.5f;
+	float x2 = (v2.x + 1.0f) * w * 0.5f;
+	float x3 = (v3.x + 1.0f) * w * 0.5f;
+	float y1 = (v1.y + 1.0f) * h * 0.5f;
+	float y2 = (v2.y + 1.0f) * h * 0.5f;
+	float y3 = (v3.y + 1.0f) * h * 0.5f;
+
+	for (int x = 0; x < h; x++) {
+		for (int y = 0; y < w; y++)
+		{
+			float f1 = (x1 - x2) * (y - y1) - (y1 - y2) * (x - x1);
+			float f2 = (x2 - x3) * (y - y2) - (y2 - y3) * (x - x2);
+			float f3 = (x3 - x1) * (y - y3) - (y3 - y1) * (x - x3);
+
+			if (f1 > 0 && f2 > 0 && f3 > 0) 
+			{
+				color[y * w + x] = pickedColor;
+			}
+		}
+	}
+
+}

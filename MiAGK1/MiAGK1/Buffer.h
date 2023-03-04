@@ -17,6 +17,8 @@ public:
 
 	bool Save();
 
-	void Triangle(float2 posX, float2 posY, float2 posZ);
+	void Triangle(float2 v1, float2 v2, float2 v3, unsigned int color);
+
+	void ColorHalf(float2 v1, float2 v2, unsigned int pickedColor);
 };
 
