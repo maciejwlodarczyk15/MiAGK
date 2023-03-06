@@ -82,6 +82,17 @@ void Buffer::Triangle(float2 v1, float2 v2, float2 v3, unsigned int pickedColor)
 	minY = std::max(minY, 0);
 	maxY = std::min(maxY, h - 1);
 
+	// Barycentric coordinate system
+	float dx13 = x1 - x3;
+	float dx23 = x2 - x3;
+	float dx32 = x3 - x2;
+	float dy23 = y2 - y3;
+	float dy13 = y1 - y3;
+	float dy31 = y3 - y1;
+	
+
+	float VerticesColor;
+
 	for (int x = minX; x < maxX; x++) {
 		for (int y = minY; y < maxY; y++)
 		{
@@ -89,9 +100,14 @@ void Buffer::Triangle(float2 v1, float2 v2, float2 v3, unsigned int pickedColor)
 			float f2 = (x2 - x3) * (y - y2) - (y2 - y3) * (x - x2);
 			float f3 = (x3 - x1) * (y - y3) - (y3 - y1) * (x - x3);
 
+			float lam1 = ( dy23 * (x - x3) + dx32 * (y - y3) / dy23*dx13 + dx32 * dy13);
+			float lam2 = ( dy31 * (x - x3) + dx13 * (y - y3) / dy31 * dx23 + dx13 * dy23 );
+			float lam3 = 1 - lam1 - lam2;
+
 			if (f1 > 0 && f2 > 0 && f3 > 0) 
 			{
 				color[y * w + x] = pickedColor;
+				//color[y * w + x] = pickedColor;
 			}
 		}
 	}
