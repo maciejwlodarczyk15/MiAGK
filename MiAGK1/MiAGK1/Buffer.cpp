@@ -76,6 +76,11 @@ void Buffer::Triangle(float2 v1, float2 v2, float2 v3, unsigned int pickedColor)
 	int minY = std::min((int)y1, std::min((int)y2, (int)y3));
 	int maxY = std::max((int)y1, std::max((int)y2, (int)y3));
 	
+	// Edge-cutting
+	minX = std::max(minX, 0);
+	maxX = std::min(maxX, w - 1);
+	minY = std::max(minY, 0);
+	maxY = std::min(maxY, h - 1);
 
 	for (int x = minX; x < maxX; x++) {
 		for (int y = minY; y < maxY; y++)
