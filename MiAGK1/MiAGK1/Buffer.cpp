@@ -70,8 +70,15 @@ void Buffer::Triangle(float2 v1, float2 v2, float2 v3, unsigned int pickedColor)
 	float y2 = (v2.y + 1.0f) * h * 0.5f;
 	float y3 = (v3.y + 1.0f) * h * 0.5f;
 
-	for (int x = 0; x < h; x++) {
-		for (int y = 0; y < w; y++)
+	// Search rectangle
+	int minX = std::min((int)x1, std::min((int)x2, (int)x3));
+	int maxX = std::max((int)x1, std::max((int)x2, (int)x3));
+	int minY = std::min((int)y1, std::min((int)y2, (int)y3));
+	int maxY = std::max((int)y1, std::max((int)y2, (int)y3));
+	
+
+	for (int x = minX; x < maxX; x++) {
+		for (int y = minY; y < maxY; y++)
 		{
 			float f1 = (x1 - x2) * (y - y1) - (y1 - y2) * (x - x1);
 			float f2 = (x2 - x3) * (y - y2) - (y2 - y3) * (x - x2);
@@ -83,5 +90,4 @@ void Buffer::Triangle(float2 v1, float2 v2, float2 v3, unsigned int pickedColor)
 			}
 		}
 	}
-
 }
