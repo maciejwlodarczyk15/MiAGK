@@ -91,7 +91,15 @@ void Buffer::Triangle(float2 v1, float2 v2, float2 v3, unsigned int pickedColor)
 	float dy31 = y3 - y1;
 	
 
-	float VerticesColor;
+	//float VerticesColor;
+
+	// unsigned int c1 = 0xFFFF0000; // 0x AARRGGBB
+	// unsigned int c2 = 0xFF00FF00;
+	// unsigned int c3 = 0xFF0000FF;
+
+	unsigned int c1 = 0x000000FF;
+	unsigned int c2 = 0xFF0000FF;
+	unsigned int c3 = 0xFF0000FF;
 
 	for (int x = minX; x < maxX; x++) {
 		for (int y = minY; y < maxY; y++)
@@ -106,7 +114,10 @@ void Buffer::Triangle(float2 v1, float2 v2, float2 v3, unsigned int pickedColor)
 
 			if (f1 > 0 && f2 > 0 && f3 > 0) 
 			{
-				color[y * w + x] = pickedColor;
+				color[y * w + x] = lam1 * c1 + lam2 * c2 + lam3 * c3;
+				//std::cout << "C: " << c1 << ", " << c2 << ", " << c3 << "\n";
+				//std::cout << "Lam: " << lam1 << ", " << lam2 << ", " << lam3 << "\n";
+				//std::cout << color[y * w + x] << "\n";
 				//color[y * w + x] = pickedColor;
 			}
 		}
