@@ -6,9 +6,12 @@ int main()
     buffer.SetSize(264, 264);
     buffer.ClearColor(0xFF00FFFF); // 0x A R G B
 
-    //buffer.ColorHalf({ -1.0f, -1.0f }, { 1.0f, 1.0f }, 0xFFFF0000);
+    float4 color1({ 1.0f, 0.0f, 0.0f, 1.0f });
+    float4 color2({ 0.0f, 1.0f, 0.0f, 1.0f });
+    float4 color3({ 0.0f, 0.0f, 1.0f, 1.0f });
 
-    buffer.Triangle({0.0f, 1.0f}, {1.0f, 1.0f}, {0.0f, 0.0f}, 0xFFFF0000);
+    buffer.Triangle({0.0f, 0.9f}, {2.2f, 0.9f}, {0.0f, 0.0f},
+                    {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f});
 
     buffer.Save();
 }

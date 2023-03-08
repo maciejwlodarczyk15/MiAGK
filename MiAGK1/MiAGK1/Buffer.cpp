@@ -44,24 +44,7 @@ void Buffer::ClearColor(unsigned int pickedColor)
 	}
 }
 
-// Color half of the screen
-void Buffer::ColorHalf(float2 v1, float2 v2, unsigned int pickedColor)
-{
-	for (int y = 0; y < h; y++) 
-	{
-		for (int x = 0; x < w; x++) 
-		{
-			float f = (v2.x - v1.x) * (y - v1.y) - (v2.y - v1.y) * (x - v1.x);
-
-			if (f < 0)
-			{
-				color[y * w + x] = pickedColor;
-			}
-		}
-	}
-}
-
-void Buffer::Triangle(float2 v1, float2 v2, float2 v3, unsigned int pickedColor)
+void Buffer::Triangle(float2 v1, float2 v2, float2 v3, float4 c1, float4 c2, float4 c3)
 {
 	float x1 = (v1.x + 1.0f) * w * 0.5f;
 	float x2 = (v2.x + 1.0f) * w * 0.5f;
@@ -70,55 +53,50 @@ void Buffer::Triangle(float2 v1, float2 v2, float2 v3, unsigned int pickedColor)
 	float y2 = (v2.y + 1.0f) * h * 0.5f;
 	float y3 = (v3.y + 1.0f) * h * 0.5f;
 
-	// Search rectangle
+	float4 color1 = c1;
+	float4 color2 = c2;
+	float4 color3 = c3;
+
+	// Rectangle search
 	int minX = std::min((int)x1, std::min((int)x2, (int)x3));
 	int maxX = std::max((int)x1, std::max((int)x2, (int)x3));
 	int minY = std::min((int)y1, std::min((int)y2, (int)y3));
 	int maxY = std::max((int)y1, std::max((int)y2, (int)y3));
-	
-	// Edge-cutting
+
+	// Edge cutting
 	minX = std::max(minX, 0);
 	maxX = std::min(maxX, w - 1);
 	minY = std::max(minY, 0);
 	maxY = std::min(maxY, h - 1);
 
-	// Barycentric coordinate system
 	float dx13 = x1 - x3;
 	float dx23 = x2 - x3;
 	float dx32 = x3 - x2;
 	float dy23 = y2 - y3;
 	float dy13 = y1 - y3;
 	float dy31 = y3 - y1;
-	
 
-	//float VerticesColor;
-
-	// unsigned int c1 = 0xFFFF0000; // 0x AARRGGBB
-	// unsigned int c2 = 0xFF00FF00;
-	// unsigned int c3 = 0xFF0000FF;
-
-	unsigned int c1 = 0x000000FF;
-	unsigned int c2 = 0xFF0000FF;
-	unsigned int c3 = 0xFF0000FF;
-
-	for (int x = minX; x < maxX; x++) {
-		for (int y = minY; y < maxY; y++)
+	for (int x = 0; x < w; x++) 
+	{
+		for (int y = 0; y < h; y++)
 		{
 			float f1 = (x1 - x2) * (y - y1) - (y1 - y2) * (x - x1);
 			float f2 = (x2 - x3) * (y - y2) - (y2 - y3) * (x - x2);
 			float f3 = (x3 - x1) * (y - y3) - (y3 - y1) * (x - x3);
 
-			float lam1 = ( dy23 * (x - x3) + dx32 * (y - y3) / dy23*dx13 + dx32 * dy13);
-			float lam2 = ( dy31 * (x - x3) + dx13 * (y - y3) / dy31 * dx23 + dx13 * dy23 );
+			float lam1 = ((((dy23) * (x - x3)) + ((dx32) * (y - y3))) / (((dy23) * (dx13)) + ((dx32) * (dy13))));
+			float lam2 = ((((dy31) * (x - x3)) + ((dx13) * (y - y3))) / (((dy31) * (dx23)) + ((dx13) * (dy23))));
 			float lam3 = 1 - lam1 - lam2;
 
-			if (f1 > 0 && f2 > 0 && f3 > 0) 
+			if (f1 > 0 && f2 > 0 && f3 > 0)
 			{
-				color[y * w + x] = lam1 * c1 + lam2 * c2 + lam3 * c3;
-				//std::cout << "C: " << c1 << ", " << c2 << ", " << c3 << "\n";
-				//std::cout << "Lam: " << lam1 << ", " << lam2 << ", " << lam3 << "\n";
-				//std::cout << color[y * w + x] << "\n";
-				//color[y * w + x] = pickedColor;
+				float4 cumulative = color1 * lam1 + color2 * lam2 + color3 * lam3;
+				float r = cumulative.x * 255;
+				float g = cumulative.y * 255;
+				float b = cumulative.z * 255;
+				float a = cumulative.w * 255;
+				unsigned int colorValue = ((unsigned int)a << 24) | ((unsigned int)r << 16) | ((unsigned int)g << 8) | (unsigned int)b;
+				color[y * w + x] = colorValue;
 			}
 		}
 	}
