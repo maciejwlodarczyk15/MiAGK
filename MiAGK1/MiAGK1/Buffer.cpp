@@ -76,6 +76,27 @@ void Buffer::Triangle(float2 v1, float2 v2, float2 v3, float4 c1, float4 c2, flo
 	float dy13 = y1 - y3;
 	float dy31 = y3 - y1;
 
+	float dy12 = y1 - y2;
+	float dx12 = x1 - x2;
+	float dx31 = x3 - x1;
+
+	bool tl1 = false;
+	bool tl2 = false;
+	bool tl3 = false;
+
+	if (dy12 < 0 || (dy12 == 0 && dx12 > 0))
+	{
+		tl1 = true;
+	}
+	if (dy23 < 0 || (dy23 == 0 && dx23 > 0))
+	{
+		tl2 = true;
+	}
+	if (dy31 < 0 || (dy31 == 0 && dx31 > 0))
+	{
+		tl3 = true;
+	}
+
 	for (int x = 0; x < w; x++) 
 	{
 		for (int y = 0; y < h; y++)
