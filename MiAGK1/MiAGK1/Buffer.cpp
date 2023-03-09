@@ -28,6 +28,14 @@ bool Buffer::Save()
 	return true;
 }
 
+void Buffer::ClearDepthBuffer()
+{
+	for (unsigned int i = 0; i < size; i++)
+	{
+		color[i] = -44;
+	}
+}
+
 void Buffer::SetSize(int width, int height)
 {
 	w = width;
@@ -44,7 +52,7 @@ void Buffer::ClearColor(unsigned int pickedColor)
 	}
 }
 
-void Buffer::Triangle(float2 v1, float2 v2, float2 v3, float4 c1, float4 c2, float4 c3)
+void Buffer::Triangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, float4 c3, Buffer dbuffer)
 {
 	float x1 = (v1.x + 1.0f) * w * 0.5f;
 	float x2 = (v2.x + 1.0f) * w * 0.5f;
@@ -100,6 +108,9 @@ void Buffer::Triangle(float2 v1, float2 v2, float2 v3, float4 c1, float4 c2, flo
 			float lam2 = ((((dy31) * (x - x3)) + ((dx13) * (y - y3))) / (((dy31) * (dx23)) + ((dx13) * (dy23))));
 			float lam3 = 1 - lam1 - lam2;
 
+			float depth =
+				(lam1 * v1.z + lam2 * v2.z + lam3 * v3.z);
+
 			bool topleft1;
 			bool topleft2;
 			bool topleft3;
@@ -122,7 +133,13 @@ void Buffer::Triangle(float2 v1, float2 v2, float2 v3, float4 c1, float4 c2, flo
 				float b = cumulative.z * 255;
 				float a = cumulative.w * 255;
 				unsigned int colorValue = ((unsigned int)a << 24) | ((unsigned int)r << 16) | ((unsigned int)g << 8) | (unsigned int)b;
-				color[y * w + x] = colorValue;
+				
+				// Z-buffer
+				if (depth < dbuffer.color[y * w + x])
+				{
+					color[y * w + x] = colorValue;
+					dbuffer.color[y * w + x] = depth;
+				}
 			}
 		}
 	}

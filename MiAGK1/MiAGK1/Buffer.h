@@ -17,6 +17,8 @@ public:
 
 	bool Save();
 
-	void Triangle(float2 v1, float2 v2, float2 v3, float4 color1, float4 color2, float4 color3);
+	void ClearDepthBuffer();
+
+	void Triangle(float3 v1, float3 v2, float3 v3, float4 color1, float4 color2, float4 color3, Buffer dbuffer);
 };
 
