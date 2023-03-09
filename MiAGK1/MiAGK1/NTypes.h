@@ -11,13 +11,6 @@ struct float3
 
 		return xd;
 	}
-	// float3 operator*(float o)
-	// {
-	// 	float xd;
-	// 	xd.x = x * o.x;
-	// 	xd.y = x * o.y;
-	// 	xd.z = x * o.z;
-	// }
 	float3 operator*(float o)
 	{
 		float3 xd;
