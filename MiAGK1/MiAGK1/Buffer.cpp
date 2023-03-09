@@ -84,20 +84,9 @@ void Buffer::Triangle(float2 v1, float2 v2, float2 v3, float4 c1, float4 c2, flo
 	bool tl2 = false;
 	bool tl3 = false;
 
-	if (dy12 < 0 || (dy12 == 0 && dx12 > 0))
-	{
-		tl1 = true;
-	}
-	if (dy23 < 0 || (dy23 == 0 && dx23 > 0))
-	{
-		tl2 = true;
-	}
-	if (dy31 < 0 || (dy31 == 0 && dx31 > 0))
-	{
-		tl3 = true;
-	}
-
-	std::cout << "\nTL1: " << tl1 << "\nTL2: " << tl2 << "\nTL3: " << tl3;
+	if (dy12 < 0 || (dy12 == 0 && dx12 > 0)) tl1 = true;
+	if (dy23 < 0 || (dy23 == 0 && dx23 > 0)) tl2 = true;
+	if (dy31 < 0 || (dy31 == 0 && dx31 > 0)) tl3 = true;
 
 	for (int x = 0; x < w; x++) 
 	{
@@ -111,83 +100,29 @@ void Buffer::Triangle(float2 v1, float2 v2, float2 v3, float4 c1, float4 c2, flo
 			float lam2 = ((((dy31) * (x - x3)) + ((dx13) * (y - y3))) / (((dy31) * (dx23)) + ((dx13) * (dy23))));
 			float lam3 = 1 - lam1 - lam2;
 
-			if (tl1 && tl2 && tl3) // TL1 && TL2 && TL3
+			bool topleft1;
+			bool topleft2;
+			bool topleft3;
+
+			// Top-left edge
+			if (tl1) topleft1 = f1 >= 0;
+			else topleft1 = f1 > 0;
+
+			if (tl2) topleft2 = f2 >= 0;
+			else topleft2 = f2 > 0;
+
+			if (tl3) topleft3 = f3 >= 0;
+			else topleft3 = f3 > 0;
+
+			if (topleft1 && topleft2 && topleft3)
 			{
-				if (f1 >= 0 && f2 >= 0 && f3 >= 0)
-				{
-					float4 cumulative = color1 * lam1 + color2 * lam2 + color3 * lam3;
-					float r = cumulative.x * 255;
-					float g = cumulative.y * 255;
-					float b = cumulative.z * 255;
-					float a = cumulative.w * 255;
-					unsigned int colorValue = ((unsigned int)a << 24) | ((unsigned int)r << 16) | ((unsigned int)g << 8) | (unsigned int)b;
-					color[y * w + x] = colorValue;
-				}
-			}
-			else if (tl1 && tl2 && !tl3) // TL1 && TL2
-			{
-				if (f1 >= 0 && f2 >= 0 && f3 > 0)
-				{
-					float4 cumulative = color1 * lam1 + color2 * lam2 + color3 * lam3;
-					float r = cumulative.x * 255;
-					float g = cumulative.y * 255;
-					float b = cumulative.z * 255;
-					float a = cumulative.w * 255;
-					unsigned int colorValue = ((unsigned int)a << 24) | ((unsigned int)r << 16) | ((unsigned int)g << 8) | (unsigned int)b;
-					color[y * w + x] = colorValue;
-				}
-			}
-			else if (!tl1 && tl2 && tl3) // TL2 && TL3
-			{
-				if (f1 > 0 && f2 >= 0 && f3 >= 0)
-				{
-					float4 cumulative = color1 * lam1 + color2 * lam2 + color3 * lam3;
-					float r = cumulative.x * 255;
-					float g = cumulative.y * 255;
-					float b = cumulative.z * 255;
-					float a = cumulative.w * 255;
-					unsigned int colorValue = ((unsigned int)a << 24) | ((unsigned int)r << 16) | ((unsigned int)g << 8) | (unsigned int)b;
-					color[y * w + x] = colorValue;
-				}
-			}
-			else if (tl1 && !tl2 && !tl3) // TL1
-			{
-				if (f1 >= 0 && f2 > 0 && f3 > 0)
-				{
-					float4 cumulative = color1 * lam1 + color2 * lam2 + color3 * lam3;
-					float r = cumulative.x * 255;
-					float g = cumulative.y * 255;
-					float b = cumulative.z * 255;
-					float a = cumulative.w * 255;
-					unsigned int colorValue = ((unsigned int)a << 24) | ((unsigned int)r << 16) | ((unsigned int)g << 8) | (unsigned int)b;
-					color[y * w + x] = colorValue;
-				}
-			}
-			else if (!tl1 && tl2 && !tl3) // TL2
-			{
-				if (f1 > 0 && f2 >= 0 && f3 > 0)
-				{
-					float4 cumulative = color1 * lam1 + color2 * lam2 + color3 * lam3;
-					float r = cumulative.x * 255;
-					float g = cumulative.y * 255;
-					float b = cumulative.z * 255;
-					float a = cumulative.w * 255;
-					unsigned int colorValue = ((unsigned int)a << 24) | ((unsigned int)r << 16) | ((unsigned int)g << 8) | (unsigned int)b;
-					color[y * w + x] = colorValue;
-				}
-			}
-			else if (!tl1 && !tl2 && tl3) // TL3
-			{
-				if (f1 > 0 && f2 > 0 && f3 >= 0)
-				{
-					float4 cumulative = color1 * lam1 + color2 * lam2 + color3 * lam3;
-					float r = cumulative.x * 255;
-					float g = cumulative.y * 255;
-					float b = cumulative.z * 255;
-					float a = cumulative.w * 255;
-					unsigned int colorValue = ((unsigned int)a << 24) | ((unsigned int)r << 16) | ((unsigned int)g << 8) | (unsigned int)b;
-					color[y * w + x] = colorValue;
-				}
+				float4 cumulative = color1 * lam1 + color2 * lam2 + color3 * lam3;
+				float r = cumulative.x * 255;
+				float g = cumulative.y * 255;
+				float b = cumulative.z * 255;
+				float a = cumulative.w * 255;
+				unsigned int colorValue = ((unsigned int)a << 24) | ((unsigned int)r << 16) | ((unsigned int)g << 8) | (unsigned int)b;
+				color[y * w + x] = colorValue;
 			}
 		}
 	}
