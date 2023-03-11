@@ -52,14 +52,33 @@ void Buffer::ClearColor(unsigned int pickedColor)
 	}
 }
 
-void Buffer::Triangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, float4 c3, Buffer dbuffer)
+void Buffer::Triangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, float4 c3, Buffer dbuffer, float4x4 pmatrix)
 {
-	float x1 = (v1.x + 1.0f) * w * 0.5f;
-	float x2 = (v2.x + 1.0f) * w * 0.5f;
-	float x3 = (v3.x + 1.0f) * w * 0.5f;
-	float y1 = (v1.y + 1.0f) * h * 0.5f;
-	float y2 = (v2.y + 1.0f) * h * 0.5f;
-	float y3 = (v3.y + 1.0f) * h * 0.5f;
+	float4 v1f4({ v1.x, v1.y, v1.z, 1.0f });
+	float4 v2f4({ v2.x, v2.y, v2.z, 1.0f });
+	float4 v3f4({ v3.x, v3.y, v3.z, 1.0f });
+	
+	float4 v1Proj(v1f4 * pmatrix);
+	float4 v2Proj(v2f4 * pmatrix);
+	float4 v3Proj(v3f4 * pmatrix);
+	
+	v1Proj = { v1Proj.x / v1Proj.w, v1Proj.y / v1Proj.w, v1Proj.z / v1Proj.w, v1Proj.w };
+	v2Proj = { v2Proj.x / v2Proj.w, v2Proj.y / v2Proj.w, v2Proj.z / v2Proj.w, v2Proj.w };
+	v3Proj = { v3Proj.x / v3Proj.w, v3Proj.y / v3Proj.w, v3Proj.z / v3Proj.w, v3Proj.w };
+	
+	float x1 = (v1Proj.x + 1.0f) * w * 0.5f;
+	float x2 = (v2Proj.x + 1.0f) * w * 0.5f;
+	float x3 = (v3Proj.x + 1.0f) * w * 0.5f;
+	float y1 = (v1Proj.y + 1.0f) * h * 0.5f;
+	float y2 = (v2Proj.y + 1.0f) * h * 0.5f;
+	float y3 = (v3Proj.y + 1.0f) * h * 0.5f;
+
+	// float x1 = (v1.x + 1.0f) * w * 0.5f;
+	// float x2 = (v2.x + 1.0f) * w * 0.5f;
+	// float x3 = (v3.x + 1.0f) * w * 0.5f;
+	// float y1 = (v1.y + 1.0f) * h * 0.5f;
+	// float y2 = (v2.y + 1.0f) * h * 0.5f;
+	// float y3 = (v3.y + 1.0f) * h * 0.5f;
 
 	float4 color1 = c1;
 	float4 color2 = c2;
@@ -109,7 +128,7 @@ void Buffer::Triangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, flo
 			float lam3 = 1 - lam1 - lam2;
 
 			float depth =
-				(lam1 * v1.z + lam2 * v2.z + lam3 * v3.z);
+				(lam1 * v1Proj.z + lam2 * v2Proj.z + lam3 * v3Proj.z);
 
 			bool topleft1;
 			bool topleft2;

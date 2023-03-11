@@ -19,6 +19,6 @@ public:
 
 	void ClearDepthBuffer();
 
-	void Triangle(float3 v1, float3 v2, float3 v3, float4 color1, float4 color2, float4 color3, Buffer dbuffer);
+	void Triangle(float3 v1, float3 v2, float3 v3, float4 color1, float4 color2, float4 color3, Buffer dbuffer, float4x4 pmatrix);
 };
 
