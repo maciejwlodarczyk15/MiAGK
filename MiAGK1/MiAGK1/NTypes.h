@@ -45,17 +45,8 @@ struct float4x4
 		return result;
 	}
 
-	void WriteToConsole()
-	{
-		std::cout << "[";
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 4; j++) {
-				std::cout << m[i][j] << ", ";
-			}
-			std::cout << "]\n[";
-		}
-		std::cout << "finished]\n\n";
-	}
+	void WriteToConsole();
+	float4x4 Identity();
 };
 
 struct float3 
@@ -71,6 +62,10 @@ struct float3
 		xd.z = z + o.z;
 
 		return xd;
+	}
+	float3 operator-(float3 o)
+	{
+		return float3(x - o.x, y - o.y, z - o.z);
 	}
 	float3 operator*(float o)
 	{
@@ -98,14 +93,15 @@ struct float3
 
 		return result;
 	}
-	void WriteToConsole()
-	{
-		std::cout << "(" << x << ", " << y << ", " << z << ")\n";
-	}
 	float3 operator/(float o)
 	{
 		return float3(x /o, y/o, z/o);
 	}
+	void WriteToConsole();
+	float3 Cross(float3 v2);
+	float3 Normalize();
+	float Length();
+	float Dot(float3 v2);
 };
 
 struct float4
@@ -141,9 +137,9 @@ struct float4
 		result.w = this->w * m.m[0][3] + this->w * m.m[1][3] + this->w * m.m[2][3] + this->w * m.m[3][3];
 		return result;
 	}
-	void WriteToConsole()
-	{
-		std::cout << "(" << x << ", " << y << ", " << z << ", " << w << ")\n";
-	}
+	void WriteToConsole();
+	float4x4 multByTanslation(float3 v);
+	float4x4 multByScale(float3 v);
+	float4x4 multByRotation(float a, float3 v);
 };
 

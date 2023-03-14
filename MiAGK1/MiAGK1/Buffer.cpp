@@ -62,9 +62,16 @@ void Buffer::Triangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, flo
 	float4 v2Proj(v2f4 * pmatrix);
 	float4 v3Proj(v3f4 * pmatrix);
 
+	//pmatrix.WriteToConsole();
+	//v1.WriteToConsole();
+	v1Proj.WriteToConsole();
+
 	v1 = float3({ v1Proj.x, v1Proj.y, v1Proj.z }) / v1Proj.w;
 	v2 = float3({ v2Proj.x, v2Proj.y, v2Proj.z }) / v2Proj.w;
 	v3 = float3({ v3Proj.x, v3Proj.y, v3Proj.z }) / v3Proj.w;
+	// v1.WriteToConsole();
+	v1.WriteToConsole();
+
 
 	float x1 = (v1.x + 1.0f) * w * 0.5f;
 	float x2 = (v2.x + 1.0f) * w * 0.5f;
@@ -121,7 +128,7 @@ void Buffer::Triangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, flo
 			float lam3 = 1 - lam1 - lam2;
 
 			float depth =
-				-(lam1 * v1.z + lam2 * v2.z + lam3 * v3.z);
+				(lam1 * v1.z + lam2 * v2.z + lam3 * v3.z);
 
 			bool topleft1;
 			bool topleft2;
