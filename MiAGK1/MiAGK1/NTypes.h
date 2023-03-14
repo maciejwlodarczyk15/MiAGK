@@ -61,6 +61,8 @@ struct float4x4
 struct float3 
 {
 	float x, y, z;
+	float3() : x(0.0f), y(0.0f), z(0.0f) {}
+	float3(float x, float y, float z): x(x), y(y), z(z) {}
 	float3 operator+(float3 o)
 	{
 		float3 xd;
@@ -102,13 +104,15 @@ struct float3
 	}
 	float3 operator/(float o)
 	{
-		return float3({x /o, y/o, z/o});
+		return float3(x /o, y/o, z/o);
 	}
 };
 
 struct float4
 {
 	float x, y, z, w;
+	float4() : x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
+	float4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
 	float4 operator+(float4 o)
 	{
 		float4 xd;

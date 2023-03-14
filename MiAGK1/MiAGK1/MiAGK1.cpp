@@ -21,10 +21,7 @@ int main()
     projectionMatrix.m[2][2] = (far + near) / (near - far);
     projectionMatrix.m[2][3] = 1;
     projectionMatrix.m[3][2] = (2.0f * far * near) / (near - far);
-
     projectionMatrix.m[3][3] = 0;
-
-    projectionMatrix.WriteToConsole(); // Correct
 
     // Setting up buffer
     Buffer buffer(width, height);
@@ -36,15 +33,15 @@ int main()
     depthBuffer.ClearDepthBuffer();
 
     // Colors (red, green, blue)
-    float4 color1({ 1.0f, 0.0f, 0.0f, 1.0f });
-    float4 color2({ 0.0f, 1.0f, 0.0f, 1.0f });
-    float4 color3({ 0.0f, 0.0f, 1.0f, 1.0f });
+    float4 color1( 1.0f, 0.0f, 0.0f, 1.0f );
+    float4 color2( 0.0f, 1.0f, 0.0f, 1.0f );
+    float4 color3( 0.0f, 0.0f, 1.0f, 1.0f );
 
     // Triangles
     buffer.Triangle({ 0.0f, 0.9f, -1.0f }, { 1.0f, 0.9f, 0.0f }, { 0.5f, -0.5f, 0.0f },
-        { 1.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f }, depthBuffer, projectionMatrix);
+                    { 1.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f }, depthBuffer, projectionMatrix);
     buffer.Triangle({ -0.5f, 0.9f, 0.0f }, { 0.8f, 0.0f, -1.0f }, { 0.3f, 0.0f, 1.0f },
-        { 1.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f }, depthBuffer, projectionMatrix);
+                    { 1.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f }, depthBuffer, projectionMatrix);
 
     buffer.Save();
 }
