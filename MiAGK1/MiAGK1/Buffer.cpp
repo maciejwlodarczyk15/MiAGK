@@ -32,7 +32,7 @@ void Buffer::ClearDepthBuffer()
 {
 	for (unsigned int i = 0; i < size; i++)
 	{
-		color[i] = -44;
+		color[i] = 1024;
 	}
 }
 
@@ -121,8 +121,7 @@ void Buffer::Triangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, flo
 			float lam3 = 1 - lam1 - lam2;
 
 			float depth =
-				//(lam1 * v1Proj.z + lam2 * v2Proj.z + lam3 * v3Proj.z);
-				(lam1 * v1.z + lam2 * v2.z + lam3 * v3.z);
+				-(lam1 * v1.z + lam2 * v2.z + lam3 * v3.z);
 
 			bool topleft1;
 			bool topleft2;
@@ -147,8 +146,6 @@ void Buffer::Triangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, flo
 				float a = cumulative.w * 255;
 				unsigned int colorValue = ((unsigned int)a << 24) | ((unsigned int)r << 16) | ((unsigned int)g << 8) | (unsigned int)b;
 				
-				// color[y * w + x] = colorValue;
-
 				// Z-buffer
 				if (depth < dbuffer.color[y * w + x])
 				{
