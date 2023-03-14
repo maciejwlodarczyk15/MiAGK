@@ -100,6 +100,10 @@ struct float3
 	{
 		std::cout << "(" << x << ", " << y << ", " << z << ")\n";
 	}
+	float3 operator/(float o)
+	{
+		return float3({x /o, y/o, z/o});
+	}
 };
 
 struct float4
@@ -124,13 +128,13 @@ struct float4
 		xd.w = w * o;
 		return xd;
 	}
-	float4 operator*(float4x4 m) 
+	float4 operator*(float4x4 m)
 	{
 		float4 result;
-		result.x = this->x * m.m[0][0] + this->y * m.m[1][0] + this->z * m.m[2][0] + this->w * m.m[3][0];
-		result.y = this->x * m.m[0][1] + this->y * m.m[1][1] + this->z * m.m[2][1] + this->w * m.m[3][1];
-		result.z = this->x * m.m[0][2] + this->y * m.m[1][2] + this->z * m.m[2][2] + this->w * m.m[3][2];
-		result.w = this->x * m.m[0][3] + this->y * m.m[1][3] + this->z * m.m[2][3] + this->w * m.m[3][3];
+		result.x = this->x * m.m[0][0] + this->x * m.m[1][0] + this->x * m.m[2][0] + this->x * m.m[3][0];
+		result.y = this->y * m.m[0][1] + this->y * m.m[1][1] + this->y * m.m[2][1] + this->y * m.m[3][1];
+		result.z = this->z * m.m[0][2] + this->z * m.m[1][2] + this->z * m.m[2][2] + this->z * m.m[3][2];
+		result.w = this->w * m.m[0][3] + this->w * m.m[1][3] + this->w * m.m[2][3] + this->w * m.m[3][3];
 		return result;
 	}
 	void WriteToConsole()
