@@ -83,7 +83,6 @@ struct float3
 		result.z = this->x * m.m[0][2] + this->y * m.m[1][2] + this->z * m.m[2][2] + 1.0f * m.m[3][2];
 		float w  = this->x * m.m[0][3] + this->y * m.m[1][3] + this->z * m.m[2][3] + 1.0f * m.m[3][3];
 
-		// result / w = perspective
 		if (w != 0)
 		{
 			result.x /= w;
@@ -128,15 +127,24 @@ struct float4
 		xd.w = w * o;
 		return xd;
 	}
+
 	float4 operator*(float4x4 m)
 	{
 		float4 result;
-		result.x = this->x * m.m[0][0] + this->x * m.m[1][0] + this->x * m.m[2][0] + this->x * m.m[3][0];
-		result.y = this->y * m.m[0][1] + this->y * m.m[1][1] + this->y * m.m[2][1] + this->y * m.m[3][1];
-		result.z = this->z * m.m[0][2] + this->z * m.m[1][2] + this->z * m.m[2][2] + this->z * m.m[3][2];
-		result.w = this->w * m.m[0][3] + this->w * m.m[1][3] + this->w * m.m[2][3] + this->w * m.m[3][3];
+
+		result.x = x * m.m[0][0] + y * m.m[0][1] + z * m.m[0][2] + w * m.m[0][3];
+		result.y = x * m.m[1][0] + y * m.m[1][1] + z * m.m[1][2] + w * m.m[1][3];
+		result.z = x * m.m[2][0] + y * m.m[2][1] + z * m.m[2][2] + w * m.m[2][3];
+		result.w = x * m.m[3][0] + y * m.m[3][1] + z * m.m[3][2] + w * m.m[3][3];
+
 		return result;
 	}
+
+	float4 operator/(float o)
+	{
+		return float4(x / o, y /o, z / o, w / o);
+	}
+
 	void WriteToConsole();
 	float4x4 multByTanslation(float3 v);
 	float4x4 multByScale(float3 v);

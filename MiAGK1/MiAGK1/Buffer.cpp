@@ -32,7 +32,7 @@ void Buffer::ClearDepthBuffer()
 {
 	for (unsigned int i = 0; i < size; i++)
 	{
-		color[i] = 1024;
+		color[i] = 1000;
 	}
 }
 
@@ -57,21 +57,26 @@ void Buffer::Triangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, flo
 	float4 v1f4({ v1.x, v1.y, v1.z, 1.0f });
 	float4 v2f4({ v2.x, v2.y, v2.z, 1.0f });
 	float4 v3f4({ v3.x, v3.y, v3.z, 1.0f });
-	
+
+	std::cout << "\nz: v1f4: " << v1f4.z;
+
 	float4 v1Proj(v1f4 * pmatrix);
 	float4 v2Proj(v2f4 * pmatrix);
 	float4 v3Proj(v3f4 * pmatrix);
 
-	//pmatrix.WriteToConsole();
-	//v1.WriteToConsole();
-	v1Proj.WriteToConsole();
+	std::cout << "\nz: v1Proj (vec * mat): " << v1Proj.z;
 
-	v1 = float3({ v1Proj.x, v1Proj.y, v1Proj.z }) / v1Proj.w;
-	v2 = float3({ v2Proj.x, v2Proj.y, v2Proj.z }) / v2Proj.w;
-	v3 = float3({ v3Proj.x, v3Proj.y, v3Proj.z }) / v3Proj.w;
-	// v1.WriteToConsole();
-	v1.WriteToConsole();
+	v1 = float3({ v1Proj.x, v1Proj.y, v1Proj.z });
+	v2 = float3({ v2Proj.x, v2Proj.y, v2Proj.z });
+	v3 = float3({ v3Proj.x, v3Proj.y, v3Proj.z });
 
+	std::cout << "\nz: v1 przed /w: " << v1.z;
+
+	if (v1Proj.w != 0.0f) v1 = v1 / v1Proj.w;
+	if (v2Proj.w != 0.0f) v2 = v2 / v2Proj.w;
+	if (v3Proj.w != 0.0f) v3 = v3 / v3Proj.w;
+
+	std::cout << "\nz: v1 po /w: " << v1.z;
 
 	float x1 = (v1.x + 1.0f) * w * 0.5f;
 	float x2 = (v2.x + 1.0f) * w * 0.5f;
@@ -79,6 +84,11 @@ void Buffer::Triangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, flo
 	float y1 = (v1.y + 1.0f) * h * 0.5f;
 	float y2 = (v2.y + 1.0f) * h * 0.5f;
 	float y3 = (v3.y + 1.0f) * h * 0.5f;
+	float z1 = -(v1.z + 1.0f) * 1000 * 0.5f;
+	float z2 = -(v2.z + 1.0f) * 1000 * 0.5f;
+	float z3 = -(v3.z + 1.0f) * 1000 * 0.5f;
+
+	std::cout << "\nz: po zmianie na uklad..." << z1;
 
 	float4 color1 = c1;
 	float4 color2 = c2;
@@ -128,7 +138,7 @@ void Buffer::Triangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, flo
 			float lam3 = 1 - lam1 - lam2;
 
 			float depth =
-				(lam1 * v1.z + lam2 * v2.z + lam3 * v3.z);
+				(lam1 * z1 + lam2 * z2 + lam3 * z3);
 
 			bool topleft1;
 			bool topleft2;
@@ -152,13 +162,13 @@ void Buffer::Triangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, flo
 				float b = cumulative.z * 255;
 				float a = cumulative.w * 255;
 				unsigned int colorValue = ((unsigned int)a << 24) | ((unsigned int)r << 16) | ((unsigned int)g << 8) | (unsigned int)b;
-				
-				// Z-buffer
-				if (depth < dbuffer.color[y * w + x])
-				{
-					color[y * w + x] = colorValue;
-					dbuffer.color[y * w + x] = depth;
-				}
+			
+				 // Z-buffer
+				 if (depth < dbuffer.color[y * w + x])
+				 {
+				 	color[y * w + x] = colorValue;
+				 	dbuffer.color[y * w + x] = depth;
+				 }
 			}
 		}
 	}

@@ -4,15 +4,15 @@
 int main()
 {
     // Screen settings
-    int width = 264;
-    int height = 264;
+    int width = 1000;
+    int height = 1000;
 
     // Projection matrix
     float4x4 projectionMatrix;
-    float fov = 90.0f; // field of view
+    float fov = 45.0f; // field of view
     float aspectRatio = (float)width / height;
-    float near = 0.01f;
-    float far = 10000.0f;
+    float near = 0.1f;
+    float far = 1000.0f;
 
     float f = tanf((fov * 0.5f) * (M_PI / 180.0f));
 
@@ -22,9 +22,6 @@ int main()
 
     projectionMatrix.m[2][3] = -1;
     projectionMatrix.m[3][2] = (2.0f * far * near) / (near - far);
-
-    //projectionMatrix.m[2][3] = (2.0f * far * near) / (near - far);
-    //projectionMatrix.m[3][2] = -1;
 
     projectionMatrix.m[3][3] = 0;
 
@@ -75,10 +72,16 @@ int main()
     float4 color3( 0.0f, 0.0f, 1.0f, 1.0f );
 
     // Triangles
-    buffer.Triangle({ 0.0f, 0.9f, -3.0f }, { 1.0f, 0.9f, -3.0f }, { 0.5f, -0.5f, -3.0f },
+    // buffer.Triangle({ -0.5f, 0.9f, 15.0f }, { 0.8f, 0.0f, 15.0f }, { 0.3f, 0.0f, 15.0f },
+    //                 { 1.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f }, depthBuffer, projectionMatrix); 
+    // buffer.Triangle({ 0.0f, 0.9f, 15.0f }, { 1.0f, 0.9f, 50.0f }, { 0.5f, -0.5f, 15.0f },
+    //                 { 1.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f }, depthBuffer, projectionMatrix);
+
+    buffer.Triangle({ 0.0f, 1.0f, 15.0f }, { 1.0f, 1.0f, 15.0f }, { 0.0f, 0.0f, 15.0f },
                     { 1.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f }, depthBuffer, projectionMatrix);
-    //buffer.Triangle({ -0.5f, 0.9f, -1.0f }, { 0.8f, 0.0f, -1.0f }, { 0.3f, 0.0f, 1.0f },
-    //                { 1.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f }, depthBuffer, projectionMatrix);
+
+    buffer.Triangle({ 0.5f, 1.0f, 15.0f }, { 1.0f, 0.0f, 15.0f }, { 0.5f, 0.5f, 25.0f },
+                    { 1.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f }, depthBuffer, projectionMatrix);
 
     buffer.Save();
 }
