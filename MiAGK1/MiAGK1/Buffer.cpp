@@ -65,9 +65,9 @@ void Buffer::Triangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, flo
 	std::cout << "\nv3f4: ";
 	v3f4.WriteToConsole();
 
-	float4 v1Proj(v1f4 * pmatrix);
-	float4 v2Proj(v2f4 * pmatrix);
-	float4 v3Proj(v3f4 * pmatrix);
+	float4 v1Proj(pmatrix * v1f4);
+	float4 v2Proj(pmatrix * v2f4);
+	float4 v3Proj(pmatrix * v3f4);
 
 	std::cout << "\nz: v1Proj (vec * mat): ";
 	v1Proj.WriteToConsole();
@@ -111,16 +111,6 @@ void Buffer::Triangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, flo
 	float z2 = v2.z;
 	float z3 = v3.z;
 
-	float3 pepega1(x1, y1, z1);
-	float3 pepega2(x2, y2, z2);
-	float3 pepega3(x3, y3, z3);
-
-	std::cout << "\nv1 po zmianie na uklad...";
-	pepega1.WriteToConsole();
-	std::cout << "\nv2 po zmianie na uklad...";
-	pepega2.WriteToConsole();
-	std::cout << "\nv3 po zmianie na uklad...";
-	pepega3.WriteToConsole();
 
 	// Rectangle search
 	int minX = std::min((int)x1, std::min((int)x2, (int)x3));

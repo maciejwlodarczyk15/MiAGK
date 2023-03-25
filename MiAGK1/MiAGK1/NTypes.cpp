@@ -54,43 +54,45 @@ float4x4 float4x4::Identity()
                     0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-void float4::WriteToConsole()
-{
-    std::cout << "(" << x << ", " << y << ", " << z << ", " << w << ")\n";
-}
-
-float4x4 float4::multByTanslation(float3 v)
+float4x4 float4x4::multByTanslation(float3 v)
 {
     float4x4 result;
-    result.Identity();
+    result = result.Identity();
     result.m[0][3] = v.x;
     result.m[1][3] = v.y;
     result.m[2][3] = v.z;
     return result;
 }
 
-float4x4 float4::multByScale(float3 v)
+float4x4 float4x4::multByScale(float3 v)
 {
-    float4x4 result;    
+    float4x4 result;
+    result = result.Identity();
     result.m[0][0] = v.x;
     result.m[1][1] = v.y;
     result.m[2][2] = v.z;
-    result.Identity();
     return result;
 }
 
-float4x4 float4::multByRotation(float a, float3 v)
+// v - os obrotu
+float4x4 float4x4::multByRotation(float a, float3 v)
 {
     float s = sin(a * M_PI / 180.0f);
     float c = cos(a * M_PI / 180.0f);
 
     v.Normalize();
 
-    float4x4 result(v.x*v.x*(1-c)+c,        v.x*v.y*(1-c)-z*s,      v.x*v.z*(1-c)+y*s,      0,
-                    v.y*v.x*(1-c)+z*s,      v.y*v.y*(1-c)+c,        v.y*v.z*(1-c)-v.x*s,    0,
-                    v.x*v.z*(1-c)-v.y*s,    v.y*v.z*(1-c)+x*s,      v.z*v.z*(1-c)+c,        0,
-                    0,                      0,                      0,                      1
-                    );
+    float4x4 result(
+                    v.x * v.x * (1 - c) + c,            v.y * v.x * (1 - c) - v.z * s,      v.x * v.z * (1 - c) + v.y * s,          0,
+                    v.x * v.y * (1 - c) + v.z * s,      v.y * v.y * (1 - c) + c,            v.y * v.z * (1 - c) - v.x * s,          0,
+                    v.x * v.z * (1 - c) - v.y * s,      v.y * v.z * (1 - c) + v.x * s,      v.z * v.z * (1 - c) + c,                0,
+                    0,                                  0,                                  0,                                      1
+    );
 
     return result;
+}
+
+void float4::WriteToConsole()
+{
+    std::cout << "(" << x << ", " << y << ", " << z << ", " << w << ")\n";
 }
