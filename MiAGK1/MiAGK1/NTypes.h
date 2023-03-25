@@ -33,8 +33,6 @@ struct float4x4
 		{
 			for (int j = 0; j < 4; ++j)
 			{
-				result.m[i][j] = 0.0f;
-
 				for (int k = 0; k < 4; ++k)
 				{
 					result.m[i][j] += m[i][k] * m2.m[k][j];
@@ -132,10 +130,10 @@ struct float4
 	{
 		float4 result;
 
-		result.x = x * m.m[0][0] + y * m.m[0][1] + z * m.m[0][2] + w * m.m[0][3];
-		result.y = x * m.m[1][0] + y * m.m[1][1] + z * m.m[1][2] + w * m.m[1][3];
-		result.z = x * m.m[2][0] + y * m.m[2][1] + z * m.m[2][2] + w * m.m[2][3];
-		result.w = x * m.m[3][0] + y * m.m[3][1] + z * m.m[3][2] + w * m.m[3][3];
+		result.x = x * m.m[0][0] + y * m.m[1][0] + z * m.m[2][0] + w * m.m[3][0];
+		result.y = x * m.m[0][1] + y * m.m[1][1] + z * m.m[2][1] + w * m.m[3][1];
+		result.z = x * m.m[0][2] + y * m.m[1][2] + z * m.m[2][2] + w * m.m[3][2];
+		result.w = x * m.m[0][3] + y * m.m[1][3] + z * m.m[2][3] + w * m.m[3][3];
 
 		return result;
 	}

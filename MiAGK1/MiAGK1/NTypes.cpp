@@ -71,7 +71,7 @@ float4x4 float4::multByTanslation(float3 v)
 
 float4x4 float4::multByScale(float3 v)
 {
-    float4x4 result;
+    float4x4 result;    
     result.m[0][0] = v.x;
     result.m[1][1] = v.y;
     result.m[2][2] = v.z;

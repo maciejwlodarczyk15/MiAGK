@@ -9,7 +9,7 @@ int main()
 
     // Projection matrix
     float4x4 projectionMatrix;
-    float fov = 45.0f; // field of view
+    float fov = 120.0f; // field of view
     float aspectRatio = (float)width / height;
     float near = 0.1f;
     float far = 1000.0f;
@@ -20,47 +20,47 @@ int main()
     projectionMatrix.m[1][1] = 1 / f;
     projectionMatrix.m[2][2] = (far + near) / (near - far);
 
-    projectionMatrix.m[2][3] = -1;
-    projectionMatrix.m[3][2] = (2.0f * far * near) / (near - far);
+    projectionMatrix.m[3][2] = -1;
+    projectionMatrix.m[2][3] = (2.0f * far * near) / (near - far);
 
     projectionMatrix.m[3][3] = 0;
 
     projectionMatrix.WriteToConsole();
 
     // Camera
-    float3 eye(0.0f, 0.0f, 20.0f);      // position of camer
-    float3 center(0.0f, 0.0f, 0.0f);    // target
-    float3 upVec(0.0f, 1.0f, 0.0f);     // up vector
+    //float3 eye(0.0f, 0.0f, 20.0f);      // position of camer
+    //float3 center(0.0f, 0.0f, 0.0f);    // target
+    //float3 upVec(0.0f, 1.0f, 0.0f);     // up vector
 
 
-    float3 zAxis = (center - eye);      // Z-Axis
-    zAxis.Normalize();
-    upVec.Normalize();
-    float3 xAxis = zAxis.Cross(upVec);  // X-Axis
-    float3 yAxis = xAxis.Cross(zAxis);  // Z-Axis
-
-    float4x4 camMatrix;
-    camMatrix.Identity();
-
-    camMatrix.m[0][0] = xAxis.x;
-    camMatrix.m[0][1] = xAxis.y;
-    camMatrix.m[0][2] = xAxis.z;
-    camMatrix.m[0][3] = -xAxis.Dot(eye);
-    camMatrix.m[1][0] = yAxis.x;
-    camMatrix.m[1][1] = yAxis.y;
-    camMatrix.m[1][2] = yAxis.z;
-    camMatrix.m[1][3] = -yAxis.Dot(eye);
-    camMatrix.m[2][0] = xAxis.x;
-    camMatrix.m[2][1] = xAxis.y;
-    camMatrix.m[2][2] = xAxis.z;
-    camMatrix.m[2][3] = -xAxis.Dot(eye);
+    //float3 zAxis = (center - eye);      // Z-Axis
+    //zAxis.Normalize();
+    //upVec.Normalize();
+    //float3 xAxis = zAxis.Cross(upVec);  // X-Axis
+    //float3 yAxis = xAxis.Cross(zAxis);  // Z-Axis
+    //
+    //float4x4 camMatrix;
+    //camMatrix.Identity();
+    //
+    //camMatrix.m[0][0] = xAxis.x;
+    //camMatrix.m[0][1] = xAxis.y;
+    //camMatrix.m[0][2] = xAxis.z;
+    //camMatrix.m[0][3] = -xAxis.Dot(eye);
+    //camMatrix.m[1][0] = yAxis.x;
+    //camMatrix.m[1][1] = yAxis.y;
+    //camMatrix.m[1][2] = yAxis.z;
+    //camMatrix.m[1][3] = -yAxis.Dot(eye);
+    //camMatrix.m[2][0] = xAxis.x;
+    //camMatrix.m[2][1] = xAxis.y;
+    //camMatrix.m[2][2] = xAxis.z;
+    //camMatrix.m[2][3] = -xAxis.Dot(eye);
 
     //camMatrix.WriteToConsole();
 
     // Setting up buffer
     Buffer buffer(width, height);
     // buffer.SetSize(width, height); size can be changed
-    buffer.ClearColor(0xFF00FFFF); // 0x A R G B
+    buffer.ClearColor(0xFF236F92); // 0x A R G B
     
     // Depth buffer
     Buffer depthBuffer(width, height);
@@ -73,15 +73,15 @@ int main()
 
     // Triangles
     // buffer.Triangle({ -0.5f, 0.9f, 15.0f }, { 0.8f, 0.0f, 15.0f }, { 0.3f, 0.0f, 15.0f },
-    //                 { 1.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f }, depthBuffer, projectionMatrix); 
+    //                 color1, color2, color3, depthBuffer, projectionMatrix); 
     // buffer.Triangle({ 0.0f, 0.9f, 15.0f }, { 1.0f, 0.9f, 50.0f }, { 0.5f, -0.5f, 15.0f },
-    //                 { 1.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f }, depthBuffer, projectionMatrix);
+    //                 color1, color2, color3, depthBuffer, projectionMatrix);
 
-    buffer.Triangle({ 0.0f, 1.0f, 15.0f }, { 1.0f, 1.0f, 15.0f }, { 0.0f, 0.0f, 15.0f },
-                    { 1.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f }, depthBuffer, projectionMatrix);
+    buffer.Triangle({ 0.5f, 0.7f, -5.2f }, { 1.0f, 0.0f, -5.2f }, { 0.3f, 0.5f, 5.2f },
+                    color1, color2, color3, depthBuffer, projectionMatrix);
 
-    buffer.Triangle({ 0.5f, 1.0f, 15.0f }, { 1.0f, 0.0f, 15.0f }, { 0.5f, 0.5f, 25.0f },
-                    { 1.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f }, depthBuffer, projectionMatrix);
+    buffer.Triangle({ 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f },
+        color1, color2, color3, depthBuffer, projectionMatrix);
 
     buffer.Save();
 }
