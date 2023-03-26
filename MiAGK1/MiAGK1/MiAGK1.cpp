@@ -8,8 +8,8 @@ int main()
     int height = 1000;
 
     // Projection matrix
-    float4x4 projectionMatrix;         // View to projection
-    float fov = 60.0f; // field of view
+    float4x4 projectionMatrix;          // View to projection
+    float fov = 60.0f;                  // Field of view
     float aspectRatio = (float)width / height;
     float near = 0.1f;
     float far = 100.0f;
@@ -26,9 +26,9 @@ int main()
     projectionMatrix.m[3][3] = 0;
 
     // Camera
-    float3 eye(0.0f, 0.0f, 3.0f);       // position of camera
-    float3 center(0.0f, 0.0f, 0.0f);    // target
-    float3 upVec(0.0f, -1.0f, 0.0f);    // up vector
+    float3 eye(0.0f, 0.0f, 3.0f);       // Position of camera
+    float3 center(0.0f, 0.0f, 0.0f);    // Target
+    float3 upVec(0.0f, -1.0f, 0.0f);    // Up vector (reversed??)
 
 
     float3 zAxis = (center - eye);      // Z-Axis
@@ -36,13 +36,6 @@ int main()
     upVec.Normalize();
     float3 xAxis = zAxis.Cross(upVec);  // X-Axis
     float3 yAxis = xAxis.Cross(zAxis);  // Y-Axis
-    
-    std::cout << "\nX:";
-    xAxis.WriteToConsole();
-    std::cout << "\nY:";
-    yAxis.WriteToConsole();
-    std::cout << "\nZ:";
-    zAxis.WriteToConsole();
 
     float4x4 camMatrix;                 // World To View
     camMatrix = camMatrix.Identity();
@@ -60,10 +53,6 @@ int main()
     camMatrix.m[2][2] = -zAxis.z;
     camMatrix.m[2][3] = -zAxis.Dot(eye);
 
-    std::cout << "Camera matrix\n";
-    camMatrix.WriteToConsole();
-
-
     float4x4 modelMatrix;               // Model to world
     modelMatrix = modelMatrix.Identity();
 
@@ -78,17 +67,8 @@ int main()
     float3 scale(1.0f, 1.0f, 1.0f);
     modelMatrix = modelMatrix * modelMatrix.multByScale(scale);
     
-
-    float4x4 mvp;
-    std::cout << "\nProjection:\n";
-    projectionMatrix.WriteToConsole();
-    std::cout << "\n\nCam:\n";
-    camMatrix.WriteToConsole();
-    std::cout << "\n\nModel:\n";
-    modelMatrix.WriteToConsole();
+    float4x4 mvp;                       // Model - View - Projection
     mvp = projectionMatrix * camMatrix * modelMatrix;
-    mvp.WriteToConsole();
-
 
     // Setting up buffer
     Buffer buffer(width, height);
@@ -108,7 +88,7 @@ int main()
                     color1, color2, color3, depthBuffer, mvp);
 
     buffer.Triangle({ 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f },
-        color1, color2, color3, depthBuffer, mvp);
+                    color1, color2, color3, depthBuffer, mvp);
 
     buffer.Save();
 }

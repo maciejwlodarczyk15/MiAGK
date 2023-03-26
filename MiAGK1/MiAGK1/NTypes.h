@@ -31,11 +31,12 @@ struct float3
 	{
 		return float3(x / o, y / o, z / o);
 	}
-	void WriteToConsole();
 	float3 Cross(float3 v2);
 	float3 Normalize();
 	float Length();
 	float Dot(float3 v2);
+
+	void WriteToConsole();
 };
 
 struct float4
@@ -145,10 +146,11 @@ struct float4x4
 		return result;
 	}
 
-	void WriteToConsole();
 	float4x4 Identity();
 	float4x4 multByTanslation(float3 v);
 	float4x4 multByScale(float3 v);
 	float4x4 multByRotation(float a, float3 v);
+
+	void WriteToConsole();
 };
 
