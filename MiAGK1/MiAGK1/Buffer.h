@@ -15,6 +15,8 @@ public:
 	void SetSize(int weight, int height);
 	void ClearColor(unsigned int pickedColor);
 
+	void Display();
+
 	bool Save();
 
 	void ClearDepthBuffer();

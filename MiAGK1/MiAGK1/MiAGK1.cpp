@@ -91,4 +91,5 @@ int main()
                     color1, color2, color3, depthBuffer, mvp);
 
     buffer.Save();
+    buffer.Display();
 }

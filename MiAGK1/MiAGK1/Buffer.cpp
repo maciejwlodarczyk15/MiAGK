@@ -4,6 +4,7 @@
 #include <corecrt_math.h>
 #include <utility>
 #include <iostream>
+#include <opencv2/opencv.hpp>
 
 Buffer::Buffer(int weight, int height)
 {
@@ -50,6 +51,33 @@ void Buffer::ClearColor(unsigned int pickedColor)
 	{	
 		color[i] = pickedColor;
 	}
+}
+
+void Buffer::Display()
+{
+	cv::Mat img(h, w, CV_8UC3, cv::Scalar(0, 0, 0));
+
+	for (int y = 0; y < h; y++)
+	{
+		for (int x = 0; x < w; x++)
+		{
+			unsigned int c = color[y * w + x];
+			cv::Vec3b& pixel = img.at<cv::Vec3b>(y, x);
+
+			unsigned char r = (c & 0x00ff0000) >> 16;
+			unsigned char g = (c & 0x0000ff00) >> 8;
+			unsigned char b = c & 0x000000ff;
+
+			pixel[0] = b;
+			pixel[1] = g;
+			pixel[2] = r;
+		}
+	}
+
+	cv::flip(img, img, 0); // Image had to be flipped horizontally to match the TGA file
+	cv::namedWindow("image", cv::WINDOW_NORMAL);
+	cv::imshow("image", img);
+	cv::waitKey(0);
 }
 
 void Buffer::Triangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, float4 c3, Buffer dbuffer, float4x4 matrix)
