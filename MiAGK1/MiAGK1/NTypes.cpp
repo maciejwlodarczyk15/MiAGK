@@ -96,3 +96,8 @@ void float4::WriteToConsole()
 {
     std::cout << "(" << x << ", " << y << ", " << z << ", " << w << ")\n";
 }
+
+void int3::WriteToConsole()
+{
+    std::cout << "(" << x << ", " << y << ", " << z << ")";
+}

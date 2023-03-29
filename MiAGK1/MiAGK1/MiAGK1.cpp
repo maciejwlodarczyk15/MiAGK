@@ -1,5 +1,6 @@
 #include "Buffer.h"
 #include "SimpleTriangle.h"
+#include "SimpleSphere.h"
 #define M_PI 3.14159265358979323846
 
 int main()
@@ -110,7 +111,11 @@ int main()
 
     SimpleTriangle triangle2({ 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f },
                             color1, color2, color3, xd);
+
     triangle2.Draw(buffer, depthBuffer, mvp2);
+
+    SimpleSphere sphere(2, 2);
+    sphere.Draw(buffer, depthBuffer, mvp2);
 
     buffer.Save();
     buffer.Display();
