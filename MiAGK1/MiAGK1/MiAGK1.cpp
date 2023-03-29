@@ -1,4 +1,5 @@
 #include "Buffer.h"
+#include "SimpleTriangle.h"
 #define M_PI 3.14159265358979323846
 
 int main()
@@ -84,11 +85,32 @@ int main()
     float4 color3( 0.0f, 0.0f, 1.0f, 1.0f );
 
     // Triangles
-    buffer.Triangle({ 0.5f, 0.7f, -0.5f }, { 1.0f, 0.0f, 0.5f }, { 0.3f, 0.5f, -0.5f },
-                    color1, color2, color3, depthBuffer, mvp);
+    int3 xd;
 
-    buffer.Triangle({ 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f },
-                    color1, color2, color3, depthBuffer, mvp);
+    SimpleTriangle triangle({ 0.5f, 0.7f, -0.5f }, { 1.0f, 0.0f, 0.5f }, { 0.3f, 0.5f, -0.5f }, 
+                            color1, color2, color3, xd);
+    triangle.Draw(buffer, depthBuffer, mvp);
+
+    float4x4 modelMatrix2;               
+    modelMatrix2 = modelMatrix.Identity();
+
+
+    float3 translation2(0.0f, 0.0f, -1.0f);
+    modelMatrix2 = modelMatrix2 * modelMatrix2.multByTanslation(translation2);
+
+    float angle2 = 90;
+    float3 axis2(0.0f, 0.0f, 1.0f);
+    modelMatrix2 = modelMatrix2 * modelMatrix2.multByRotation(angle2, axis2);
+
+    float3 scale2(1.0f, 1.0f, 1.0f);
+    modelMatrix2 = modelMatrix2 * modelMatrix2.multByScale(scale2);
+
+    float4x4 mvp2;                       // Model - View - Projection
+    mvp2 = projectionMatrix * camMatrix * modelMatrix2;
+
+    SimpleTriangle triangle2({ 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f },
+                            color1, color2, color3, xd);
+    triangle2.Draw(buffer, depthBuffer, mvp2);
 
     buffer.Save();
     buffer.Display();

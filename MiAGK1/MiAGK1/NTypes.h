@@ -154,3 +154,8 @@ struct float4x4
 	void WriteToConsole();
 };
 
+struct int3
+{
+	int x, y, z;
+	int3(): x(0.0f), y(0.0f), z(0.0f) {}
+};
