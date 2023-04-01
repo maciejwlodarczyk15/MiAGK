@@ -1,6 +1,7 @@
 #include "Buffer.h"
 #include "SimpleTriangle.h"
 #include "SimpleSphere.h"
+#include "SimpleCone.h"
 #define M_PI 3.14159265358979323846
 
 int main()
@@ -11,7 +12,7 @@ int main()
 
     // Projection matrix
     float4x4 projectionMatrix;          // View to projection
-    float fov = 60.0f;                  // Field of view
+    float fov = 120.0f;                  // Field of view
     float aspectRatio = (float)width / height;
     float near = 0.1f;
     float far = 100.0f;
@@ -86,21 +87,19 @@ int main()
     float4 color3( 0.0f, 0.0f, 1.0f, 1.0f );
 
     // Triangles
-    int3 xd;
-
     SimpleTriangle triangle({ 0.5f, 0.7f, -0.5f }, { 1.0f, 0.0f, 0.5f }, { 0.3f, 0.5f, -0.5f }, 
-                            color1, color2, color3, xd);
+                            color1, color2, color3);
     triangle.Draw(buffer, depthBuffer, mvp);
 
     float4x4 modelMatrix2;               
     modelMatrix2 = modelMatrix.Identity();
 
 
-    float3 translation2(0.0f, 0.0f, -1.0f);
+    float3 translation2(0.0f, 0.0f, 0.0f);
     modelMatrix2 = modelMatrix2 * modelMatrix2.multByTanslation(translation2);
 
-    float angle2 = 90;
-    float3 axis2(0.0f, 0.0f, 1.0f);
+    float angle2 = -45;
+    float3 axis2(1.0f, 0.0f, 0.0f);
     modelMatrix2 = modelMatrix2 * modelMatrix2.multByRotation(angle2, axis2);
 
     float3 scale2(1.0f, 1.0f, 1.0f);
@@ -109,13 +108,16 @@ int main()
     float4x4 mvp2;                       // Model - View - Projection
     mvp2 = projectionMatrix * camMatrix * modelMatrix2;
 
-    SimpleTriangle triangle2({ 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f },
-                            color1, color2, color3, xd);
+    //SimpleTriangle triangle2({ 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f },
+    //                        color1, color2, color3);
+    //
+    //triangle2.Draw(buffer, depthBuffer, mvp2);
 
-    triangle2.Draw(buffer, depthBuffer, mvp2);
+    //SimpleSphere sphere(2, 2);
+    //sphere.Draw(buffer, depthBuffer, mvp2);
 
-    SimpleSphere sphere(2, 2);
-    sphere.Draw(buffer, depthBuffer, mvp2);
+    SimpleCone cone1(float3(0, 1.0f, 0), 1.0f, 20.0f, 20);
+    cone1.Draw(buffer, depthBuffer, mvp2, color1);
 
     buffer.Save();
     buffer.Display();

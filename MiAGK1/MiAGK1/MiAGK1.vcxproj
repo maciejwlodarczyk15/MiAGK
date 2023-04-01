@@ -148,12 +148,14 @@
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="MiAGK1.cpp" />
     <ClCompile Include="NTypes.cpp" />
+    <ClCompile Include="SimpleCone.cpp" />
     <ClCompile Include="SimpleSphere.cpp" />
     <ClCompile Include="SimpleTriangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="NTypes.h" />
+    <ClInclude Include="SimpleCone.h" />
     <ClInclude Include="SimpleSphere.h" />
     <ClInclude Include="SimpleTriangle.h" />
   </ItemGroup>

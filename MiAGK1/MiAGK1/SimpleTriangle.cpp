@@ -1,8 +1,7 @@
 #include "SimpleTriangle.h"
 
-SimpleTriangle::SimpleTriangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, float4 c3, int3 i)
+SimpleTriangle::SimpleTriangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, float4 c3)
 {
-	indices = i;
 	vertices[0] = v1;
 	vertices[1] = v2;
 	vertices[2] = v3;
