@@ -116,8 +116,11 @@ int main()
     //SimpleSphere sphere(2, 2);
     //sphere.Draw(buffer, depthBuffer, mvp2);
 
-    SimpleCone cone1(float3(0, 1.0f, 0), 1.0f, 20.0f, 20);
-    cone1.Draw(buffer, depthBuffer, mvp2, color1);
+    //SimpleCone cone1(float3(0, 1.0f, 0), 1.0f, 20.0f, 20);
+    //cone1.Draw(buffer, depthBuffer, mvp2, color1);
+
+    SimpleSphere sphere1(float3(0, 0, 0), 1.2f, 12, 8);
+    sphere1.Draw(buffer, depthBuffer, mvp2);
 
     buffer.Save();
     buffer.Display();

@@ -27,10 +27,10 @@
     <ClCompile Include="SimpleTriangle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleSphere.cpp">
+    <ClCompile Include="SimpleCone.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleCone.cpp">
+    <ClCompile Include="SimpleSphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,10 +44,10 @@
     <ClInclude Include="SimpleTriangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleSphere.h">
+    <ClInclude Include="SimpleCone.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleCone.h">
+    <ClInclude Include="SimpleSphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
