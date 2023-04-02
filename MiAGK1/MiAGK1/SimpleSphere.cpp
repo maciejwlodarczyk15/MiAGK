@@ -11,7 +11,7 @@ SimpleSphere::SimpleSphere(float3 pos, float r, int v, int h)
 	vert = v;
 	horiz = h;
 
-	// Bieguny
+	// Poles 
 	vertices.push_back(float3(position.x, position.y + radius, position.z));
 	vertices.push_back(float3(position.x, position.y - radius, position.z));
 
@@ -29,6 +29,7 @@ SimpleSphere::SimpleSphere(float3 pos, float r, int v, int h)
 
 void SimpleSphere::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix)
 {
+	// Colors
 	float4 c(0.3f, 1.0f, 1.0f, 1.0f);
 	float4 r(1.0f, 1.0f, 0.0f, 1.0f);
 	float4 g(0.0f, 1.0f, 1.0f, 1.0f);
@@ -37,18 +38,18 @@ void SimpleSphere::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix)
 	{
 		for (int j = 0; j < vert; j++)
 		{
-			// Górna warstwa
+			// Top layer
 			if (i == 0)
 			{
 				SimpleTriangle(vertices[0], vertices[(j + 1) % vert + 2], vertices[j + 2], r, g, b).Draw(buff, dBuff, matrix);
 			}
-			// Dolna warstwa
+			// Bottom layer
 			if (i == horiz - 1)
 			{
 				SimpleTriangle(vertices[1], vertices[j + 2 + (horiz - 1) * vert], vertices[(j + 1) % vert + 2 + (horiz - 1) * vert], r, g, b).Draw(buff, dBuff, matrix);
 			}
 
-			// Boki
+			// Walls
 			else
 			{
 				int v1 = 2 + j + i * vert;
