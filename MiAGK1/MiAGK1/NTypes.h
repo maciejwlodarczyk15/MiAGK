@@ -27,6 +27,14 @@ struct float3
 		xd.z = z * o;
 		return xd;
 	}
+	float3 operator*(float3 o)
+	{
+		float3 xd;
+		xd.x = x * o.x;
+		xd.y = y * o.y;
+		xd.z = z * o.z;
+		return xd;
+	}
 	float3 operator/(float o)
 	{
 		return float3(x / o, y / o, z / o);

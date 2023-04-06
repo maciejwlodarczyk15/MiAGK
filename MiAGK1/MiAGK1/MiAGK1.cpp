@@ -2,6 +2,8 @@
 #include "SimpleTriangle.h"
 #include "SimpleSphere.h"
 #include "SimpleCone.h"
+#include "DirectionalLight.h"
+
 #define M_PI 3.14159265358979323846
 
 int main()
@@ -87,6 +89,8 @@ int main()
     float4 color3( 0.0f, 0.0f, 1.0f, 1.0f );
 
     // Triangles
+    DirectionalLight light(float3(0, 0, 0), float4(1, 1, 1, 1));
+
     SimpleTriangle triangle({ 0.5f, 0.7f, -0.5f }, { 1.0f, 0.0f, 0.5f }, { 0.3f, 0.5f, -0.5f }, 
                             color1, color2, color3);
     triangle.Draw(buffer, depthBuffer, mvp);
@@ -116,11 +120,11 @@ int main()
 
     // Cone(pos, radius, height, vertices at base)
     SimpleCone cone1(float3(0.0f, 1.0f, 0.0f), 1.0f, -4.0f, 20);
-    cone1.Draw(buffer, depthBuffer, mvp2, color1);
+    cone1.Draw(buffer, depthBuffer, mvp2, color1, light);
 
     // Sphere(pos, radius, vert slices, horiz slices)
     SimpleSphere sphere1(float3(-3.0f, 0.0f, 0.0f), 1.2f, 12, 8);
-    sphere1.Draw(buffer, depthBuffer, mvp2);
+    sphere1.Draw(buffer, depthBuffer, mvp2, light);
 
     buffer.Save();
     buffer.Display();

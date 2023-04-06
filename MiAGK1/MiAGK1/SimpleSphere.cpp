@@ -27,7 +27,7 @@ SimpleSphere::SimpleSphere(float3 pos, float r, int v, int h)
 	}
 }
 
-void SimpleSphere::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix)
+void SimpleSphere::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight light)
 {
 	// Colors
 	float4 c(0.3f, 1.0f, 1.0f, 1.0f);

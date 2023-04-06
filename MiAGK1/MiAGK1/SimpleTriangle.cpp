@@ -73,6 +73,20 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix)
 	if (dy23 < 0 || (dy23 == 0 && dx23 > 0)) tl2 = true;
 	if (dy31 < 0 || (dy31 == 0 && dx31 > 0)) tl3 = true;
 
+	float3 directionalLightDirection(0.0f, 0.0f, 0.0f);
+	float3 directionalLightColor(1.0f, 1.0f, 1.0f);
+	float3 v1v2 = v2new - v1new;
+	float3 v1v3 = v3new - v1new;
+	float3 normal = v1v2.Cross(v1v3).Normalize();
+
+	float3 ambientColor(0.5f, 0.5f, 0.5f);
+	float3 toLight = (directionalLightDirection * (-1)).Normalize();
+	float intensity = std::max(0.0f, toLight.Dot(normal));
+
+	float3 tcolor1(colors[0].x, colors[0].y, colors[0].z);
+	float3 tcolor2(colors[1].x, colors[1].y, colors[1].z);
+	float3 tcolor3(colors[2].x, colors[2].y, colors[2].z);
+
 	for (int x = 0; x < w; x++)
 	{
 		for (int y = 0; y < h; y++)
@@ -103,11 +117,35 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix)
 
 			if (topleft1 && topleft2 && topleft3)
 			{
-				float4 cumulative = colors[0] * lam1 + colors[1] * lam2 + colors[2] * lam3;
-				float r = cumulative.x * 255;
-				float g = cumulative.y * 255;
-				float b = cumulative.z * 255;
-				float a = cumulative.w * 255;
+				//float4 cumulative = colors[0] * lam1 + colors[1] * lam2 + colors[2] * lam3;
+
+				//float r = cumulative.x * 255;
+				//float g = cumulative.y * 255;
+				//float b = cumulative.z * 255;
+				//float a = cumulative.w * 255;
+
+				//unsigned int colorValue = ((unsigned int)a << 24) | ((unsigned int)r << 16) | ((unsigned int)g << 8) | (unsigned int)b;
+
+
+				float3 color = tcolor1 * lam1 + tcolor2 * lam2 + tcolor3 * lam3;
+				
+				float3 diffuse = directionalLightColor * color * intensity;
+
+				float3 ambient = ambientColor * color;
+
+				float3 finalColor = diffuse + ambient;
+
+				float r = finalColor.x * 255;
+				float g = finalColor.y * 255;
+				float b = finalColor.z * 255;
+				float a = colors[0].w * 255;
+
+				// Clamp color values to the range of 0-255
+				r = (r < 0) ? 0 : ((r > 255) ? 255 : r);
+				g = (g < 0) ? 0 : ((g > 255) ? 255 : g);
+				b = (b < 0) ? 0 : ((b > 255) ? 255 : b);
+				a = (a < 0) ? 0 : ((a > 255) ? 255 : a);
+
 				unsigned int colorValue = ((unsigned int)a << 24) | ((unsigned int)r << 16) | ((unsigned int)g << 8) | (unsigned int)b;
 
 				// Z-buffer

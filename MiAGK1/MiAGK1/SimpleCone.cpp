@@ -22,7 +22,7 @@ SimpleCone::SimpleCone(float3 pos, float r, float h, int vNumber)
 	}
 }
 
-void SimpleCone::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, float4 color)
+void SimpleCone::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, float4 color, DirectionalLight light)
 {
 	// Colors
 	float4 red(1.0f, 0.0f, 0.0f, 1.0f);
