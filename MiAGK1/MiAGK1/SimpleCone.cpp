@@ -37,7 +37,7 @@ void SimpleCone::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, float4 color
 		// Base triangles
 		SimpleTriangle triangle2(vertices[1], vertices[i + 2], vertices[(i + 1) % vertexNumber + 2], red, colors[(i + 1) % 2], colors[i % 2]);
 		
-		triangle1.Draw(buff, dBuff, matrix);
-		triangle2.Draw(buff, dBuff, matrix);
+		triangle1.Draw(buff, dBuff, matrix, light);
+		triangle2.Draw(buff, dBuff, matrix, light);
 	}
 }

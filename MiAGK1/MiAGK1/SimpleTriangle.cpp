@@ -10,7 +10,7 @@ SimpleTriangle::SimpleTriangle(float3 v1, float3 v2, float3 v3, float4 c1, float
 	colors[2] = c3;
 }
 
-void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix)
+void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight light)
 {
 	int w = buff.GetWidth();
 	int h = buff.GetHeight();
@@ -73,19 +73,56 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix)
 	if (dy23 < 0 || (dy23 == 0 && dx23 > 0)) tl2 = true;
 	if (dy31 < 0 || (dy31 == 0 && dx31 > 0)) tl3 = true;
 
-	float3 directionalLightDirection(0.0f, 0.0f, 0.0f);
-	float3 directionalLightColor(1.0f, 1.0f, 1.0f);
-	float3 v1v2 = v2new - v1new;
-	float3 v1v3 = v3new - v1new;
-	float3 normal = v1v2.Cross(v1v3).Normalize();
+	//float3 directionalLightDirection(0.0f, 0.0f, 1.0f);
+	float3 directionalLightDirection = light.GetDirection();
+	//float3 directionalLightColor(1.0f, 1.0f, 0.0f);
+	float3 directionalLightColor = light.GetColor();
+	float3 v1v2 = vertices[1] - vertices[0];
+	float3 v1v3 = vertices[2] - vertices[0];
+	//float3 v1v2 = v2new - v1new;
+	//float3 v1v3 = v3new - v1new;
+	float3 normal = (v1v2.Cross(v1v3)).Normalize();
 
-	float3 ambientColor(0.5f, 0.5f, 0.5f);
+	float3 ambientColor(0.1f, 0.1f, 0.1f);
 	float3 toLight = (directionalLightDirection * (-1)).Normalize();
 	float intensity = std::max(0.0f, toLight.Dot(normal));
 
 	float3 tcolor1(colors[0].x, colors[0].y, colors[0].z);
 	float3 tcolor2(colors[1].x, colors[1].y, colors[1].z);
 	float3 tcolor3(colors[2].x, colors[2].y, colors[2].z);
+
+	//std::cout << "\n\nTriangle xd ";
+	//std::cout << "\nv1v2: ";
+	//v1v2.WriteToConsole();
+	//std::cout << "\nv1v3: ";
+	//v1v3.WriteToConsole();
+	//std::cout << "\nv1v2.Cross(v1v3): ";
+	//(v1v2.Cross(v1v3)).WriteToConsole();
+
+	//std::cout << "\n\nTriangle xd\nv1: ";
+	//v1new.WriteToConsole();
+	//std::cout << "\nv2: ";
+	//v2new.WriteToConsole();
+	//std::cout << "\nv3: ";
+	//v3new.WriteToConsole();
+	//std::cout << "\nv1v2: ";
+	//v1v2.WriteToConsole();
+	//std::cout << "\nv1v3: ";
+	//v1v3.WriteToConsole();
+	//std::cout << "\nNormal: ";
+	//normal.WriteToConsole();
+	//std::cout << "\nToLight:";
+	//toLight.WriteToConsole();
+	//std::cout << "\nIntensity: " << intensity;
+
+	//std::cout << "\n\nTriangle xd ";
+
+	//std::cout << "\ntoLight: ";
+	//toLight.WriteToConsole();
+	//std::cout << "\nNormal: ";
+	//normal.WriteToConsole();
+	//std::cout << "\ntoLight * normal" << toLight.Dot(normal);
+	//std::cout << "\nIntensity: " << intensity;
 
 	for (int x = 0; x < w; x++)
 	{
@@ -117,20 +154,8 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix)
 
 			if (topleft1 && topleft2 && topleft3)
 			{
-				//float4 cumulative = colors[0] * lam1 + colors[1] * lam2 + colors[2] * lam3;
-
-				//float r = cumulative.x * 255;
-				//float g = cumulative.y * 255;
-				//float b = cumulative.z * 255;
-				//float a = cumulative.w * 255;
-
-				//unsigned int colorValue = ((unsigned int)a << 24) | ((unsigned int)r << 16) | ((unsigned int)g << 8) | (unsigned int)b;
-
-
 				float3 color = tcolor1 * lam1 + tcolor2 * lam2 + tcolor3 * lam3;
-				
 				float3 diffuse = directionalLightColor * color * intensity;
-
 				float3 ambient = ambientColor * color;
 
 				float3 finalColor = diffuse + ambient;

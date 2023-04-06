@@ -19,9 +19,11 @@ float3 float3::Normalize()
     float length = this->Length();
     if (length != 0)
     {
-        float3 newVector({x /= length, y /= length, z /= length});
+        x /= length;
+        y /= length;
+        z /= length;
     }
-    return float3();
+    return *this;
 }
 
 float float3::Length()
@@ -88,6 +90,21 @@ float4x4 float4x4::multByRotation(float a, float3 v)
                     v.x * v.z * (1 - c) - v.y * s,      v.y * v.z * (1 - c) + v.x * s,      v.z * v.z * (1 - c) + c,                0,
                     0,                                  0,                                  0,                                      1
     );
+
+    return result;
+}
+
+float4x4 float4x4::Transpose()
+{
+    float4x4 result;
+
+    for (int i = 0; i < 4; ++i)
+    {
+        for (int j = 0; j < 4; ++j)
+        {
+            result.m[j][i] = m[i][j];
+        }
+    }
 
     return result;
 }
