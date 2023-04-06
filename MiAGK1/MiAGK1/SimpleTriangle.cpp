@@ -78,16 +78,16 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 
 	// POINT LIGHT
 
-	PointLight pLight(float3(0, 2, 0), float3(1,1,1), 0.0f, 10.0f, 1.0f, 0.14f, 0.07f);
-
+	PointLight pLight(float3(0, 0, 0), float3(1,1,1), 1.0f, 250.0f, 1.0f, 0.14f, 0.07f);
+	float3 eye(0.0f, 0.0f, 3.0f);	// camera position
 	float3 center(0.0f, 0.0f, 0.0f); // camera target
-
 	float shininess = 4.0f;
 
-	// DIRECTIONAL LIGHT
-
+	// Directional light
 	float3 directionalLightDirection = light.GetDirection();
 	float3 directionalLightColor = light.GetColor();
+
+	// Normals
 	float3 v1v2 = vertices[1] - vertices[0];
 	float3 v1v3 = vertices[2] - vertices[0];
 	float3 normal = (v1v2.Cross(v1v3)).Normalize();
@@ -135,30 +135,53 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 			{
 				// Color from vertices and lambdas
 				float3 color = tcolor1 * lam1 + tcolor2 * lam2 + tcolor3 * lam3;
+
 				// Ambient color
 				float3 ambient = ambientColor * color;
+
 				// Color of directional
 				float3 diffuseDirectional = directionalLightColor * color * intensityDirectional;
 				
-				// POINT LIGHT
-				float3 toPointLight = pLight.GetPosition() - (vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3);
-				float toPointLightDistance = toPointLight.Length();
-				float3 toPointLightDirection = toPointLight / toPointLightDistance;
-				
-				float intensityPoint = std::max(0.0f, toPointLightDirection.Dot(normal));
 
-				float attenuation = 1.0f / (pLight.GetConstant() + pLight.GetLinear() * toPointLightDistance + pLight.GetQuadratic() * toPointLightDistance * toPointLightDistance);
-				float3 diffusePoint = pLight.GetColor() * color * intensityPoint * attenuation;
-				float3 halfWay = (toPointLightDirection + center).Normalize();
-				float specularPoint = std::pow(std::max(0.0f, normal.Dot(halfWay)), shininess);
+
+				// POINT LIGHT
+
+				//float3 toPointLight = pLight.GetPosition() - (vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3);
+				//float toPointLightDistance = toPointLight.Length();
+				//float3 toPointLightDirection = toPointLight / toPointLightDistance;
+				//
+				//float intensityPoint = std::max(0.0f, toPointLightDirection.Dot(normal));
+				//
+				//float attenuation = 1.0f / (pLight.GetConstant() + pLight.GetLinear() * toPointLightDistance + pLight.GetQuadratic() * toPointLightDistance * toPointLightDistance);
+				//float3 halfWay = (toPointLightDirection + center).Normalize();
+				//float specularPoint = std::pow(std::max(0.0f, normal.Dot(halfWay)), shininess);
+
+				float3 lightDir = ((vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3) - pLight.GetPosition()).Normalize();
+				float diff = std::max(0.0f, -normal.Dot(lightDir));
+				float3 diffusePoint = pLight.GetColor() * color * diff;
+
+				float3 viewDir = ((vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3) - eye).Normalize();
+				float3 halfwayDir = (lightDir + viewDir).Normalize();
+
+				float specularIntensity = 4.0f;
+				float spec = pow(std::max(0.0f, normal.Dot(halfwayDir)), specularIntensity);
+				spec = pow(std::max(viewDir.Dot(lightDir - normal * normal.Dot(lightDir) * 2), 0.0f), specularIntensity);
+				float3 diffuseSpecular = pLight.GetColor() * spec;
+
+
 
 				//float3 finalColor = ambient;
 				//float3 finalColor = ambient + (/*diffuseDirectional +*/ diffusePoint);
-				//float3 finalColor = diffuseDirectional + ambient;
-
-				//float3 finalColor = diffusePoint;
 				
-				float3 finalColor = ambient + diffuseDirectional;
+				// DIFFUSE DZIALAJACY SAM
+				//float3 finalColor = ambient + diffuseDirectional;
+
+				 // LIGHT DIR = (PIXEL - LIGHT.POSITION).NORMALIZE()
+				//float3 lightDir = (pLight.GetPosition() - float3(x, y, depth)).Normalize();
+				//float diff = std::max(0.0f, normal.Dot(lightDir));
+				//float3 diffusePoint = color * pLight.GetColor() * pLight.GetIntensity() * diff;
+
+				float3 finalColor = ambient + diffusePoint + diffuseSpecular;
 
 				float r = finalColor.x * 255;
 				float g = finalColor.y * 255;

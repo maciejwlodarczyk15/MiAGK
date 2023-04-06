@@ -14,7 +14,7 @@ int main()
 
     // Projection matrix
     float4x4 projectionMatrix;          // View to projection
-    float fov = 60.0f;                  // Field of view
+    float fov = 120.0f;                  // Field of view
     float aspectRatio = (float)width / height;
     float near = 0.1f;
     float far = 100.0f;
@@ -134,12 +134,33 @@ int main()
     //triangle2.Draw(buffer, depthBuffer, mvp2, light, modelMatrix);
     
     // Cone(pos, radius, height, vertices at base)
-    SimpleCone cone1(float3(0.0f, 1.0f, 0.0f), 1.0f, 4.0f, 20);
-    cone1.Draw(buffer, depthBuffer, mvp2, color1, light, modelMatrix2);
+   //SimpleCone cone1(float3(0.0f, 1.0f, 0.0f), 1.0f, 4.0f, 20);
+   //cone1.Draw(buffer, depthBuffer, mvp2, color1, light, modelMatrix);
     
     // Sphere(pos, radius, vert slices, horiz slices)
-    SimpleSphere sphere1(float3(5.0f, -5.0f, -15.0f), 1.2f, 12, 8);
-    sphere1.Draw(buffer, depthBuffer, mvp, light, modelMatrix);
+    //SimpleSphere sphere1(float3(5.0f, -5.0f, -15.0f), 1.2f, 12, 8);
+    //sphere1.Draw(buffer, depthBuffer, mvp, light, modelMatrix);
+
+
+    float4x4 modelMatrix13;               // Model to world
+    modelMatrix13 = modelMatrix.Identity();
+
+    float3 translation13(0.0f, 0.0f, 0.0f);
+    modelMatrix13 = modelMatrix * modelMatrix.multByTanslation(translation);
+
+    float angle13 = 0;
+    float3 axis13(0.0f, 0.0f, 1.0f);
+    modelMatrix13 = modelMatrix * modelMatrix.multByRotation(angle3, axis3);
+
+    float3 scale13(1.0f, 1.0f, 1.0f);
+    modelMatrix13 = modelMatrix * modelMatrix.multByScale(scale13);
+    
+
+    float4x4 mvp13;                       // Model - View - Projection
+    mvp = projectionMatrix * camMatrix * modelMatrix13;
+
+    SimpleSphere sphere1(float3(0.0f, 0.0f, 0.0f), 1.0f, 12, 8);
+    sphere1.Draw(buffer, depthBuffer, mvp13, light, modelMatrix13);
 
     float4x4 mat({  1.0f, 2.0f, 3.0f, 4.0f,
                     0.0f, 1.0f, 2.0f, 3.0f,
