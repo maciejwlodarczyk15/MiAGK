@@ -149,6 +149,7 @@
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="MiAGK1.cpp" />
     <ClCompile Include="NTypes.cpp" />
+    <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="SimpleCone.cpp" />
     <ClCompile Include="SimpleSphere.cpp" />
     <ClCompile Include="SimpleTriangle.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="NTypes.h" />
+    <ClInclude Include="PointLight.h" />
     <ClInclude Include="SimpleCone.h" />
     <ClInclude Include="SimpleSphere.h" />
     <ClInclude Include="SimpleTriangle.h" />

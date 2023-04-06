@@ -16,6 +16,6 @@ private:
 
 public:
 	SimpleSphere(float3 pos, float r, int v, int h);
-	void Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight light);
+	void Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight light, float4x4 modelM);
 };
 

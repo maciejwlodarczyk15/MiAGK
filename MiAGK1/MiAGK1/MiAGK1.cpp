@@ -71,6 +71,8 @@ int main()
 
     float3 scale(1.0f, 1.0f, 1.0f);
     modelMatrix = modelMatrix * modelMatrix.multByScale(scale);
+
+    modelMatrix.WriteToConsole();
     
     float4x4 mvp;                       // Model - View - Projection
     mvp = projectionMatrix * camMatrix * modelMatrix;
@@ -93,38 +95,68 @@ int main()
 
     SimpleTriangle triangle({ 0.5f, 0.7f, -0.5f }, { 1.0f, 0.0f, 0.5f }, { 0.3f, 0.5f, -0.5f }, 
                             color1, color2, color3);
-    triangle.Draw(buffer, depthBuffer, mvp, light);
+    triangle.Draw(buffer, depthBuffer, mvp, light, modelMatrix);
 
     float4x4 modelMatrix2;               
     modelMatrix2 = modelMatrix.Identity();
 
-
     float3 translation2(0.0f, 0.0f, 5.0f);
     modelMatrix2 = modelMatrix2 * modelMatrix2.multByTanslation(translation2);
 
-    float angle2 = -45;
-    float3 axis2(1.0f, 0.0f, 0.0f);
+    float angle2 = 90;
+    float3 axis2(0.0f, 0.0f, 1.0f);
     modelMatrix2 = modelMatrix2 * modelMatrix2.multByRotation(angle2, axis2);
+
+    float angle3 = 45;
+    float3 axis3(1.0f, 0.0f, 0.0f);
+    modelMatrix2 = modelMatrix2 * modelMatrix2.multByRotation(angle3, axis3);
+
+    float angle4 = 45;
+    float3 axis4(0.0f, 0.0f, 1.0f);
+    modelMatrix2 = modelMatrix2 * modelMatrix2.multByRotation(angle4, axis4);
+
+    float angle5 = 180;
+    float3 axis5(0.0f, 1.0f, 0.0f);
+    modelMatrix2 = modelMatrix2 * modelMatrix2.multByRotation(angle5, axis5);
 
     float3 scale2(1.0f, 1.0f, 1.0f);
     modelMatrix2 = modelMatrix2 * modelMatrix2.multByScale(scale2);
 
+    //modelMatrix2.WriteToConsole();
+
     float4x4 mvp2;                       // Model - View - Projection
     mvp2 = projectionMatrix * camMatrix * modelMatrix2;
 
-   // Triangle(v1, v2, v3, c1, c2, c3)
-   SimpleTriangle triangle2({ 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f },
-                           color1, color2, color3);
-   
-   triangle2.Draw(buffer, depthBuffer, mvp2, light);
-   
-   // Cone(pos, radius, height, vertices at base)
-   SimpleCone cone1(float3(0.0f, 1.0f, 0.0f), 1.0f, 4.0f, 20);
-   cone1.Draw(buffer, depthBuffer, mvp2, color1, light);
-   
-   // Sphere(pos, radius, vert slices, horiz slices)
-   SimpleSphere sphere1(float3(-3.0f, 0.0f, 0.0f), 1.2f, 12, 8);
-   sphere1.Draw(buffer, depthBuffer, mvp2, light);
+    // Triangle(v1, v2, v3, c1, c2, c3)
+    //SimpleTriangle triangle2({ 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f },
+    //                        color1, color2, color3);
+    //
+    //triangle2.Draw(buffer, depthBuffer, mvp2, light, modelMatrix);
+    
+    // Cone(pos, radius, height, vertices at base)
+    SimpleCone cone1(float3(0.0f, 1.0f, 0.0f), 1.0f, 4.0f, 20);
+    cone1.Draw(buffer, depthBuffer, mvp2, color1, light, modelMatrix2);
+    
+    // Sphere(pos, radius, vert slices, horiz slices)
+    SimpleSphere sphere1(float3(5.0f, -5.0f, -15.0f), 1.2f, 12, 8);
+    sphere1.Draw(buffer, depthBuffer, mvp, light, modelMatrix);
+
+    float4x4 mat({  1.0f, 2.0f, 3.0f, 4.0f,
+                    0.0f, 1.0f, 2.0f, 3.0f,
+                    12.0f, -5.0f, 1.0f, 2.0f,
+                    0.0f, 3.0f, 2.0f, 1.0f });
+
+    //float3 xd(1, 2, 3);
+    //mat.WriteToConsole();
+    //xd.WriteToConsole();
+    //float3 pepega = mat * xd;
+    //pepega.WriteToConsole();
+    //pepega.Normalize();
+    //pepega.WriteToConsole();
+    //
+    //std::cout << mat.CalculateDeterminant() << "\n";
+    //float4x4 mat2 = mat.Inverse();
+    //mat2.WriteToConsole();
 
     buffer.Save();
     buffer.Display();

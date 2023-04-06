@@ -27,7 +27,7 @@ SimpleSphere::SimpleSphere(float3 pos, float r, int v, int h)
 	}
 }
 
-void SimpleSphere::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight light)
+void SimpleSphere::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight light, float4x4 modelM)
 {
 	// Colors
 	float4 c(0.3f, 1.0f, 1.0f, 1.0f);
@@ -41,12 +41,12 @@ void SimpleSphere::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directiona
 			// Top layer
 			if (i == 0)
 			{
-				SimpleTriangle(vertices[0], vertices[(j + 1) % vert + 2], vertices[j + 2], r, g, b).Draw(buff, dBuff, matrix, light);
+				SimpleTriangle(vertices[0], vertices[(j + 1) % vert + 2], vertices[j + 2], r, g, b).Draw(buff, dBuff, matrix, light, modelM);
 			}
 			// Bottom layer
 			if (i == horiz - 1)
 			{
-				SimpleTriangle(vertices[1], vertices[j + 2 + (horiz - 1) * vert], vertices[(j + 1) % vert + 2 + (horiz - 1) * vert], r, g, b).Draw(buff, dBuff, matrix, light);
+				SimpleTriangle(vertices[1], vertices[j + 2 + (horiz - 1) * vert], vertices[(j + 1) % vert + 2 + (horiz - 1) * vert], r, g, b).Draw(buff, dBuff, matrix, light, modelM);
 			}
 
 			// Walls
@@ -56,8 +56,8 @@ void SimpleSphere::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directiona
 				int v2 = 2 + (j + 1) % vert + i * vert;
 				int v3 = 2 + j + (i + 1) * vert;
 				int v4 = 2 + (j + 1) % vert + (i + 1) * vert;
-				SimpleTriangle(vertices[v1], vertices[v2], vertices[v3], r, g, b).Draw(buff, dBuff, matrix, light);
-				SimpleTriangle(vertices[v4], vertices[v3], vertices[v2], r, g, b).Draw(buff, dBuff, matrix, light);
+				SimpleTriangle(vertices[v1], vertices[v2], vertices[v3], r, g, b).Draw(buff, dBuff, matrix, light, modelM);
+				SimpleTriangle(vertices[v4], vertices[v3], vertices[v2], r, g, b).Draw(buff, dBuff, matrix, light, modelM);
 			}
 		}
 	}

@@ -10,7 +10,7 @@ SimpleTriangle::SimpleTriangle(float3 v1, float3 v2, float3 v3, float4 c1, float
 	colors[2] = c3;
 }
 
-void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight light)
+void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight light, float4x4 modelM)
 {
 	int w = buff.GetWidth();
 	int h = buff.GetHeight();
@@ -41,6 +41,9 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 	float z2 = vertices[1].z;
 	float z3 = vertices[2].z;
 
+	float3 oldv1(x1, y1, z1);
+	float3 oldv2(x2, y2, z2);
+	float3 oldv3(x3, y3, z3);
 
 	// Rectangle search
 	int minX = std::min((int)x1, std::min((int)x2, (int)x3));
@@ -73,56 +76,32 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 	if (dy23 < 0 || (dy23 == 0 && dx23 > 0)) tl2 = true;
 	if (dy31 < 0 || (dy31 == 0 && dx31 > 0)) tl3 = true;
 
-	//float3 directionalLightDirection(0.0f, 0.0f, 1.0f);
+	// POINT LIGHT
+
+	PointLight pLight(float3(0, 2, 0), float3(1,1,1), 0.0f, 10.0f, 1.0f, 0.14f, 0.07f);
+
+	float3 center(0.0f, 0.0f, 0.0f); // camera target
+
+	float shininess = 4.0f;
+
+	// DIRECTIONAL LIGHT
+
 	float3 directionalLightDirection = light.GetDirection();
-	//float3 directionalLightColor(1.0f, 1.0f, 0.0f);
 	float3 directionalLightColor = light.GetColor();
 	float3 v1v2 = vertices[1] - vertices[0];
 	float3 v1v3 = vertices[2] - vertices[0];
-	//float3 v1v2 = v2new - v1new;
-	//float3 v1v3 = v3new - v1new;
 	float3 normal = (v1v2.Cross(v1v3)).Normalize();
 
+	// Calculate normals based on translation/rotation/scale
+	normal = modelM * normal;
+	
 	float3 ambientColor(0.1f, 0.1f, 0.1f);
 	float3 toLight = (directionalLightDirection * (-1)).Normalize();
-	float intensity = std::max(0.0f, toLight.Dot(normal));
+	float intensityDirectional = std::max(0.0f, toLight.Dot(normal));
 
 	float3 tcolor1(colors[0].x, colors[0].y, colors[0].z);
 	float3 tcolor2(colors[1].x, colors[1].y, colors[1].z);
 	float3 tcolor3(colors[2].x, colors[2].y, colors[2].z);
-
-	//std::cout << "\n\nTriangle xd ";
-	//std::cout << "\nv1v2: ";
-	//v1v2.WriteToConsole();
-	//std::cout << "\nv1v3: ";
-	//v1v3.WriteToConsole();
-	//std::cout << "\nv1v2.Cross(v1v3): ";
-	//(v1v2.Cross(v1v3)).WriteToConsole();
-
-	//std::cout << "\n\nTriangle xd\nv1: ";
-	//v1new.WriteToConsole();
-	//std::cout << "\nv2: ";
-	//v2new.WriteToConsole();
-	//std::cout << "\nv3: ";
-	//v3new.WriteToConsole();
-	//std::cout << "\nv1v2: ";
-	//v1v2.WriteToConsole();
-	//std::cout << "\nv1v3: ";
-	//v1v3.WriteToConsole();
-	//std::cout << "\nNormal: ";
-	//normal.WriteToConsole();
-	//std::cout << "\nToLight:";
-	//toLight.WriteToConsole();
-	//std::cout << "\nIntensity: " << intensity;
-
-	//std::cout << "\n\nTriangle xd ";
-
-	//std::cout << "\ntoLight: ";
-	//toLight.WriteToConsole();
-	//std::cout << "\nNormal: ";
-	//normal.WriteToConsole();
-	//std::cout << "\ntoLight * normal" << toLight.Dot(normal);
-	//std::cout << "\nIntensity: " << intensity;
 
 	for (int x = 0; x < w; x++)
 	{
@@ -154,11 +133,32 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 
 			if (topleft1 && topleft2 && topleft3)
 			{
+				// Color from vertices and lambdas
 				float3 color = tcolor1 * lam1 + tcolor2 * lam2 + tcolor3 * lam3;
-				float3 diffuse = directionalLightColor * color * intensity;
+				// Ambient color
 				float3 ambient = ambientColor * color;
+				// Color of directional
+				float3 diffuseDirectional = directionalLightColor * color * intensityDirectional;
+				
+				// POINT LIGHT
+				float3 toPointLight = pLight.GetPosition() - (vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3);
+				float toPointLightDistance = toPointLight.Length();
+				float3 toPointLightDirection = toPointLight / toPointLightDistance;
+				
+				float intensityPoint = std::max(0.0f, toPointLightDirection.Dot(normal));
 
-				float3 finalColor = diffuse + ambient;
+				float attenuation = 1.0f / (pLight.GetConstant() + pLight.GetLinear() * toPointLightDistance + pLight.GetQuadratic() * toPointLightDistance * toPointLightDistance);
+				float3 diffusePoint = pLight.GetColor() * color * intensityPoint * attenuation;
+				float3 halfWay = (toPointLightDirection + center).Normalize();
+				float specularPoint = std::pow(std::max(0.0f, normal.Dot(halfWay)), shininess);
+
+				//float3 finalColor = ambient;
+				//float3 finalColor = ambient + (/*diffuseDirectional +*/ diffusePoint);
+				//float3 finalColor = diffuseDirectional + ambient;
+
+				//float3 finalColor = diffusePoint;
+				
+				float3 finalColor = ambient + diffuseDirectional;
 
 				float r = finalColor.x * 255;
 				float g = finalColor.y * 255;

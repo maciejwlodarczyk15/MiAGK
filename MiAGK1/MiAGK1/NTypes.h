@@ -124,14 +124,13 @@ struct float4x4
 		return result;
 	}
 
-	float4 operator*(float3 vec)
+	float3 operator*(float3 vec)
 	{
-		float4 result;
+		float3 result;
 
-		result.x += m[0][0] * vec.x + m[0][1] * vec.y + m[0][2] * vec.z + m[0][3];
-		result.y += m[1][0] * vec.x + m[1][1] * vec.y + m[1][2] * vec.z + m[1][3];
-		result.z += m[2][0] * vec.x + m[2][1] * vec.y + m[2][2] * vec.z + m[2][3];
-		result.w += m[3][0] * vec.x + m[3][1] * vec.y + m[3][2] * vec.z + m[3][3];
+		result.x += m[0][0] * vec.x + m[0][1] * vec.y + m[0][2] * vec.z;
+		result.y += m[1][0] * vec.x + m[1][1] * vec.y + m[1][2] * vec.z;
+		result.z += m[2][0] * vec.x + m[2][1] * vec.y + m[2][2] * vec.z;
 
 		return result;
 	}
@@ -158,6 +157,9 @@ struct float4x4
 	float4x4 multByTanslation(float3 v);
 	float4x4 multByScale(float3 v);
 	float4x4 multByRotation(float a, float3 v);
+	float4x4 Transpose();
+	float CalculateDeterminant();
+	float4x4 Inverse();
 
 	void WriteToConsole();
 };
