@@ -26,6 +26,11 @@ float3 float3::Normalize()
     return *this;
 }
 
+float3 float3::Reflect(float3 vector)
+{
+    return *this - vector * (this->Dot(vector) * 2.0f);
+}
+
 float float3::Length()
 {
     return sqrt(x * x + y * y + z * z);

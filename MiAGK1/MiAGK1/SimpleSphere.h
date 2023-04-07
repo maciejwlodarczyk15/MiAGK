@@ -3,6 +3,7 @@
 #include "Ntypes.h"
 #include "Buffer.h"
 #include "DirectionalLight.h"
+#include "PointLight.h"
 #include <vector>
 
 class SimpleSphere
@@ -16,6 +17,6 @@ private:
 
 public:
 	SimpleSphere(float3 pos, float r, int v, int h);
-	void Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight light, float4x4 modelM);
+	void Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition);
 };
 

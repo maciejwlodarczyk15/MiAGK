@@ -13,6 +13,6 @@ private:
 
 public:
 	SimpleTriangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, float4 c3);
-	void Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight light, float4x4 modelM);
+	void Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition);
 };
 

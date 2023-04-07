@@ -41,9 +41,10 @@ struct float3
 	}
 	float3 Cross(float3 v2);
 	float3 Normalize();
+	float3 Reflect(float3 vector);
 	float Length();
 	float Dot(float3 v2);
-
+	
 	void WriteToConsole();
 };
 

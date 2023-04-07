@@ -22,7 +22,7 @@ SimpleCone::SimpleCone(float3 pos, float r, float h, int vNumber)
 	}
 }
 
-void SimpleCone::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, float4 color, DirectionalLight light, float4x4 modelM)
+void SimpleCone::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition)
 {
 	// Colors
 	float4 red(1.0f, 0.0f, 0.0f, 1.0f);
@@ -37,7 +37,7 @@ void SimpleCone::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, float4 color
 		// Base triangles
 		SimpleTriangle triangle2(vertices[1], vertices[i + 2], vertices[(i + 1) % vertexNumber + 2], red, colors[(i + 1) % 2], colors[i % 2]);
 		
-		triangle1.Draw(buff, dBuff, matrix, light, modelM);
-		triangle2.Draw(buff, dBuff, matrix, light, modelM);
+		triangle1.Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition);
+		triangle2.Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition);
 	}
 }

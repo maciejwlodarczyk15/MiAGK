@@ -14,7 +14,7 @@ int main()
 
     // Projection matrix
     float4x4 projectionMatrix;          // View to projection
-    float fov = 120.0f;                  // Field of view
+    float fov = 60.0f;                  // Field of view
     float aspectRatio = (float)width / height;
     float near = 0.1f;
     float far = 100.0f;
@@ -58,28 +58,9 @@ int main()
     camMatrix.m[2][2] = -zAxis.z;
     camMatrix.m[2][3] = -zAxis.Dot(eye);
 
-    float4x4 modelMatrix;               // Model to world
-    modelMatrix = modelMatrix.Identity();
-
-
-    float3 translation(0.0f, 0.0f, -1.0f);
-    modelMatrix = modelMatrix * modelMatrix.multByTanslation(translation);
-
-    float angle = 0;
-    float3 axis(0.0f, 0.0f, 1.0f);
-    modelMatrix = modelMatrix * modelMatrix.multByRotation(angle, axis);
-
-    float3 scale(1.0f, 1.0f, 1.0f);
-    modelMatrix = modelMatrix * modelMatrix.multByScale(scale);
-
-    modelMatrix.WriteToConsole();
-    
-    float4x4 mvp;                       // Model - View - Projection
-    mvp = projectionMatrix * camMatrix * modelMatrix;
-
     // Setting up buffer
     Buffer buffer(width, height);
-    buffer.ClearColor(0xFF236F92); // 0x A R G B
+    buffer.ClearColor(0xFF000000); // 0x A R G B
     
     // Depth buffer
     Buffer depthBuffer(width, height);
@@ -92,92 +73,75 @@ int main()
 
     // Triangles
     DirectionalLight light(float3(0.0f, 0.0f, 1.0f), float3(1.0f, 1.0f, 1.0f));
-
-    SimpleTriangle triangle({ 0.5f, 0.7f, -0.5f }, { 1.0f, 0.0f, 0.5f }, { 0.3f, 0.5f, -0.5f }, 
-                            color1, color2, color3);
-    triangle.Draw(buffer, depthBuffer, mvp, light, modelMatrix);
-
-    float4x4 modelMatrix2;               
-    modelMatrix2 = modelMatrix.Identity();
-
-    float3 translation2(0.0f, 0.0f, 5.0f);
-    modelMatrix2 = modelMatrix2 * modelMatrix2.multByTanslation(translation2);
-
-    float angle2 = 90;
-    float3 axis2(0.0f, 0.0f, 1.0f);
-    modelMatrix2 = modelMatrix2 * modelMatrix2.multByRotation(angle2, axis2);
-
-    float angle3 = 45;
-    float3 axis3(1.0f, 0.0f, 0.0f);
-    modelMatrix2 = modelMatrix2 * modelMatrix2.multByRotation(angle3, axis3);
-
-    float angle4 = 45;
-    float3 axis4(0.0f, 0.0f, 1.0f);
-    modelMatrix2 = modelMatrix2 * modelMatrix2.multByRotation(angle4, axis4);
-
-    float angle5 = 180;
-    float3 axis5(0.0f, 1.0f, 0.0f);
-    modelMatrix2 = modelMatrix2 * modelMatrix2.multByRotation(angle5, axis5);
-
-    float3 scale2(1.0f, 1.0f, 1.0f);
-    modelMatrix2 = modelMatrix2 * modelMatrix2.multByScale(scale2);
-
-    //modelMatrix2.WriteToConsole();
-
-    float4x4 mvp2;                       // Model - View - Projection
-    mvp2 = projectionMatrix * camMatrix * modelMatrix2;
-
-    // Triangle(v1, v2, v3, c1, c2, c3)
-    //SimpleTriangle triangle2({ 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f },
-    //                        color1, color2, color3);
-    //
-    //triangle2.Draw(buffer, depthBuffer, mvp2, light, modelMatrix);
-    
-    // Cone(pos, radius, height, vertices at base)
-   //SimpleCone cone1(float3(0.0f, 1.0f, 0.0f), 1.0f, 4.0f, 20);
-   //cone1.Draw(buffer, depthBuffer, mvp2, color1, light, modelMatrix);
-    
-    // Sphere(pos, radius, vert slices, horiz slices)
-    //SimpleSphere sphere1(float3(5.0f, -5.0f, -15.0f), 1.2f, 12, 8);
-    //sphere1.Draw(buffer, depthBuffer, mvp, light, modelMatrix);
+    PointLight pLight1(float3(2.0f, -5.0f, 5.0f), float3(1, 1, 1), 1.0f, 250.0f, 1.0f, 0.14f, 0.07f);
 
 
-    float4x4 modelMatrix13;               // Model to world
-    modelMatrix13 = modelMatrix.Identity();
+    float4x4 s1modelMatrix;               // Model to world
+    s1modelMatrix = s1modelMatrix.Identity();
 
-    float3 translation13(0.0f, 0.0f, 0.0f);
-    modelMatrix13 = modelMatrix * modelMatrix.multByTanslation(translation);
+    float3 s1translation(0.0f, 0.0f, 0.0f);
+    s1modelMatrix = s1modelMatrix * s1modelMatrix.multByTanslation(s1translation);
 
-    float angle13 = 0;
-    float3 axis13(0.0f, 0.0f, 1.0f);
-    modelMatrix13 = modelMatrix * modelMatrix.multByRotation(angle3, axis3);
+    float s1angle = 0;
+    float3 s1axis(0.0f, 0.0f, 1.0f);
+    s1modelMatrix = s1modelMatrix * s1modelMatrix.multByRotation(s1angle, s1axis);
 
-    float3 scale13(1.0f, 1.0f, 1.0f);
-    modelMatrix13 = modelMatrix * modelMatrix.multByScale(scale13);
-    
+    float3 s1scale(1.0f, 1.0f, 1.0f);
+    s1modelMatrix = s1modelMatrix * s1modelMatrix.multByScale(s1scale);
 
-    float4x4 mvp13;                       // Model - View - Projection
-    mvp = projectionMatrix * camMatrix * modelMatrix13;
+    float4x4 s1mvp;                       // Model - View - Projection
+    s1mvp = projectionMatrix * camMatrix * s1modelMatrix;
 
-    SimpleSphere sphere1(float3(0.0f, 0.0f, 0.0f), 1.0f, 12, 8);
-    sphere1.Draw(buffer, depthBuffer, mvp13, light, modelMatrix13);
+    SimpleSphere s1(float3(3.0f, 3.0f, 5.0f), 1.0f, 12, 8);
+    s1.Draw(buffer, depthBuffer, s1mvp, light, s1modelMatrix, pLight1, eye);
 
-    float4x4 mat({  1.0f, 2.0f, 3.0f, 4.0f,
-                    0.0f, 1.0f, 2.0f, 3.0f,
-                    12.0f, -5.0f, 1.0f, 2.0f,
-                    0.0f, 3.0f, 2.0f, 1.0f });
 
-    //float3 xd(1, 2, 3);
-    //mat.WriteToConsole();
-    //xd.WriteToConsole();
-    //float3 pepega = mat * xd;
-    //pepega.WriteToConsole();
-    //pepega.Normalize();
-    //pepega.WriteToConsole();
-    //
-    //std::cout << mat.CalculateDeterminant() << "\n";
-    //float4x4 mat2 = mat.Inverse();
-    //mat2.WriteToConsole();
+
+    float4x4 c1modelMatrix;
+    c1modelMatrix = c1modelMatrix.Identity();
+
+    float3 c1translation(0.0f, 0.0f, 0.0f);
+    c1modelMatrix = c1modelMatrix * c1modelMatrix.multByTanslation(c1translation);
+
+    float c1angle = 135;
+    float3 c1axis(0.0f, 0.0f, 1.0f);
+    c1modelMatrix = c1modelMatrix * c1modelMatrix.multByRotation(c1angle, c1axis);
+
+    float c1angle2 = 45;
+    float3 c1axis2(1.0f, 0.0f, 0.0f);
+    c1modelMatrix = c1modelMatrix * c1modelMatrix.multByRotation(c1angle2, c1axis2);
+
+    float3 c1scale(1.0f, 1.0f, 1.0f);
+    c1modelMatrix = c1modelMatrix * c1modelMatrix.multByScale(c1scale);
+
+    float4x4 c1mvp;
+    c1mvp = projectionMatrix * camMatrix * c1modelMatrix;
+
+    SimpleCone c1(float3(0.0f, 0.0f, 0.0f), 0.3f, 1, 8);
+    c1.Draw(buffer, depthBuffer, c1mvp, light, c1modelMatrix, pLight1, eye);
+
+    float4x4 s2modelMatrix;
+    s2modelMatrix = s2modelMatrix.Identity();
+
+    float3 s2translation(0.0f, 0.0f, 0.0f);
+    s2modelMatrix = s2modelMatrix * s2modelMatrix.multByTanslation(s2translation);
+
+    float s2angle = 0;
+    float3 s2axis(0.0f, 0.0f, 1.0f);
+    s2modelMatrix = s2modelMatrix * s2modelMatrix.multByRotation(s2angle, s2axis);
+
+    float s2angle2 = 45;
+    float3 s2axis2(1.0f, 0.0f, 0.0f);
+    s2modelMatrix = s2modelMatrix * s2modelMatrix.multByRotation(s2angle2, s2axis2);
+
+    float3 s2scale(1.0f, 1.0f, 1.0f);
+    s2modelMatrix = s2modelMatrix * s2modelMatrix.multByScale(s2scale);
+
+    float4x4 s2mvp;
+    s2mvp = projectionMatrix * camMatrix * s2modelMatrix;
+     
+    SimpleSphere s2(float3(-2.0f, 2.0f, 5.0f), 1.0f, 6, 8);
+    s2.Draw(buffer, depthBuffer, s2mvp, light, s2modelMatrix, pLight1, eye);
 
     buffer.Save();
     buffer.Display();
