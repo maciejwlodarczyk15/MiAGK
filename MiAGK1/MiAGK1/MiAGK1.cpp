@@ -72,8 +72,8 @@ int main()
     float4 color3( 0.0f, 0.0f, 1.0f, 1.0f );
 
     // Triangles
-    DirectionalLight light(float3(0.0f, 0.0f, 1.0f), float3(1.0f, 1.0f, 1.0f));
-    PointLight pLight1(float3(2.0f, -5.0f, 5.0f), float3(1, 1, 1), 1.0f, 250.0f, 1.0f, 0.14f, 0.07f);
+    DirectionalLight light(float3(0.0f, -1.0f, 0.0f), float3(1.0f, 1.0f, 1.0f));
+    PointLight pLight1(float3(2.0f, -5.0f, 5.0f), float3(0.5f, 0.5f, 0.5f), 1.0f, 250.0f, 1.0f, 0.14f, 0.07f);
 
 
     float4x4 s1modelMatrix;               // Model to world
@@ -92,7 +92,7 @@ int main()
     float4x4 s1mvp;                       // Model - View - Projection
     s1mvp = projectionMatrix * camMatrix * s1modelMatrix;
 
-    SimpleSphere s1(float3(3.0f, 3.0f, 5.0f), 1.0f, 12, 8);
+    SimpleSphere s1(float3(3.0f, 3.0f, 5.0f), 1.0f, 16, 16);
     s1.Draw(buffer, depthBuffer, s1mvp, light, s1modelMatrix, pLight1, eye);
 
 
@@ -117,7 +117,7 @@ int main()
     float4x4 c1mvp;
     c1mvp = projectionMatrix * camMatrix * c1modelMatrix;
 
-    SimpleCone c1(float3(0.0f, 0.0f, 0.0f), 0.3f, 1, 8);
+    SimpleCone c1(float3(0.0f, 0.0f, 0.0f   ), 0.3f, 1, 16);
     c1.Draw(buffer, depthBuffer, c1mvp, light, c1modelMatrix, pLight1, eye);
 
     float4x4 s2modelMatrix;
@@ -140,7 +140,7 @@ int main()
     float4x4 s2mvp;
     s2mvp = projectionMatrix * camMatrix * s2modelMatrix;
      
-    SimpleSphere s2(float3(-2.0f, 2.0f, 5.0f), 1.0f, 6, 8);
+    SimpleSphere s2(float3(-2.0f, 2.0f, 5.0f), 1.0f, 16, 16);
     s2.Draw(buffer, depthBuffer, s2mvp, light, s2modelMatrix, pLight1, eye);
 
     buffer.Save();

@@ -39,6 +39,10 @@ struct float3
 	{
 		return float3(x / o, y / o, z / o);
 	}
+	float3 operator-()
+	{
+		return float3(-x, -y, -z);
+	}
 	float3 Cross(float3 v2);
 	float3 Normalize();
 	float3 Reflect(float3 vector);

@@ -76,20 +76,20 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 	if (dy23 < 0 || (dy23 == 0 && dx23 > 0)) tl2 = true;
 	if (dy31 < 0 || (dy31 == 0 && dx31 > 0)) tl3 = true;
 
-	// Directional light
-	float3 directionalLightDirection = dLight.GetDirection();
-	float3 directionalLightColor = dLight.GetColor();
-
 	// Normals
 	float3 v1v2 = vertices[1] - vertices[0];
 	float3 v1v3 = vertices[2] - vertices[0];
-	float3 normal = (v1v2.Cross(v1v3)).Normalize();
+	float3 normal = (-v1v2.Cross(v1v3)).Normalize();
 
 	// Calculate normals based on translation/rotation/scale
 	normal = modelM * normal;
-	
+
+	float3 cameraTarget(0.0f, 0.0f, 0.0f);	// cameraTarget
+
+	float3 specularColor(1.0f, 1.0f, 1.0f);
+
 	float3 ambientColor(0.1f, 0.1f, 0.1f);
-	float3 toLight = (directionalLightDirection * (-1)).Normalize();
+	float3 toLight = (-dLight.GetDirection()).Normalize();
 	float intensityDirectional = std::max(0.0f, toLight.Dot(normal));
 
 	float3 tcolor1(colors[0].x, colors[0].y, colors[0].z);
@@ -133,60 +133,20 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 				float3 ambient = ambientColor * color;
 
 				// Color of directional
-				float3 diffuseDirectional = directionalLightColor * color * intensityDirectional;
+				float3 diffuseDirectional = dLight.GetColor() * color * intensityDirectional;
 				
 				// POINT DIFFUSE
-				float3 lightDirection = (pLight.GetPosition() - (vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3)).Normalize();
-				float pDiffuse = std::max(0.0f, (normal.Dot(lightDirection)));
+				float3 lightDirection = ((vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3) - pLight.GetPosition()).Normalize();
+				float pDiffuse = std::max(0.0f, (-normal.Dot(lightDirection)));
 				float3 pDiffColor = pLight.GetColor() * pDiffuse * color;
 
 				// POINT SPECULAR
 				float specularStrength = 0.5f;
-				float3 viewDir = (cameraPosition - (vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3)).Normalize();
+				float3 viewDir = (cameraTarget - cameraPosition).Normalize();
 
-				float3 reflectDir = (lightDirection * (-1)).Reflect(normal).Normalize();
-				float spec = std::pow(std::max(viewDir.Dot(reflectDir), 0.0f), 32);
-				float3 pSpecColor = pLight.GetColor() * color * spec * specularStrength;
-
-
-				// POINT LIGHT
-
-				//float3 toPointLight = pLight.GetPosition() - (vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3);
-				//float toPointLightDistance = toPointLight.Length();
-				//float3 toPointLightDirection = toPointLight / toPointLightDistance;
-				//
-				//float intensityPoint = std::max(0.0f, toPointLightDirection.Dot(normal));
-				//
-				//float attenuation = 1.0f / (pLight.GetConstant() + pLight.GetLinear() * toPointLightDistance + pLight.GetQuadratic() * toPointLightDistance * toPointLightDistance);
-				//float3 halfWay = (toPointLightDirection + center).Normalize();
-				//float specularPoint = std::pow(std::max(0.0f, normal.Dot(halfWay)), shininess);
-
-				//float3 lightDir = ((vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3) - pLight.GetPosition()).Normalize();
-				//float diff = std::max(0.0f, -normal.Dot(lightDir));
-				//float3 diffusePoint = pLight.GetColor() * color * diff;
-				//
-				//float3 viewDir = ((vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3) - eye).Normalize();
-				//float3 halfwayDir = (lightDir + viewDir).Normalize();
-				//
-				//float specularIntensity = 4.0f;
-				//float spec = pow(std::max(0.0f, normal.Dot(halfwayDir)), specularIntensity);
-				//spec = pow(std::max(viewDir.Dot(lightDir - normal * normal.Dot(lightDir) * 2), 0.0f), specularIntensity);
-				//float3 diffuseSpecular = pLight.GetColor() * spec;
-
-
-
-				//float3 finalColor = ambient;
-				//float3 finalColor = ambient + (/*diffuseDirectional +*/ diffusePoint);
-				
-				// DIFFUSE DZIALAJACY SAM
-				//float3 finalColor = ambient + diffuseDirectional;
-
-				 // LIGHT DIR = (PIXEL - LIGHT.POSITION).NORMALIZE()
-				//float3 lightDir = (pLight.GetPosition() - float3(x, y, depth)).Normalize();
-				//float diff = std::max(0.0f, normal.Dot(lightDir));
-				//float3 diffusePoint = color * pLight.GetColor() * pLight.GetIntensity() * diff;
-
-				//float3 finalColor = ambient + diffusePoint + diffuseSpecular;
+				float3 reflectDir = lightDirection.Reflect(normal).Normalize();
+				float spec = std::pow(std::max(-viewDir.Dot(reflectDir), 0.0f), 24);
+				float3 pSpecColor = specularColor * color * spec * specularStrength;
 
 				float3 finalColor = ambient + pDiffColor + pSpecColor;
 
