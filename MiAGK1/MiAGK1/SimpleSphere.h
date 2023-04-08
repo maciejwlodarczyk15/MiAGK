@@ -14,9 +14,10 @@ private:
 	int vert;
 	int horiz;
 	std::vector<float3> vertices;
+	std::vector<float3> normals;
 
 public:
 	SimpleSphere(float3 pos, float r, int v, int h);
-	void Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition);
+	void Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition, float3 cameraTarget);
 };
 

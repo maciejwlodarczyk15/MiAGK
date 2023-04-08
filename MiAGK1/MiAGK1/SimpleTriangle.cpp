@@ -1,6 +1,6 @@
 #include "SimpleTriangle.h"
 
-SimpleTriangle::SimpleTriangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, float4 c3)
+SimpleTriangle::SimpleTriangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, float4 c3, float3 n1, float3 n2, float3 n3)
 {
 	vertices[0] = v1;
 	vertices[1] = v2;
@@ -8,9 +8,12 @@ SimpleTriangle::SimpleTriangle(float3 v1, float3 v2, float3 v3, float4 c1, float
 	colors[0] = c1;
 	colors[1] = c2;
 	colors[2] = c3;
+	normal[0] = n1;
+	normal[1] = n2;
+	normal[2] = n3;
 }
 
-void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition)
+void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition, float3 cameraTarget)
 {
 	int w = buff.GetWidth();
 	int h = buff.GetHeight();
@@ -40,10 +43,6 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 	float z1 = vertices[0].z;
 	float z2 = vertices[1].z;
 	float z3 = vertices[2].z;
-
-	float3 oldv1(x1, y1, z1);
-	float3 oldv2(x2, y2, z2);
-	float3 oldv3(x3, y3, z3);
 
 	// Rectangle search
 	int minX = std::min((int)x1, std::min((int)x2, (int)x3));
@@ -76,21 +75,11 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 	if (dy23 < 0 || (dy23 == 0 && dx23 > 0)) tl2 = true;
 	if (dy31 < 0 || (dy31 == 0 && dx31 > 0)) tl3 = true;
 
-	// Normals
-	float3 v1v2 = vertices[1] - vertices[0];
-	float3 v1v3 = vertices[2] - vertices[0];
-	float3 normal = (-v1v2.Cross(v1v3)).Normalize();
-
-	// Calculate normals based on translation/rotation/scale
-	normal = modelM * normal;
-
-	float3 cameraTarget(0.0f, 0.0f, 0.0f);	// cameraTarget
-
-	float3 specularColor(1.0f, 1.0f, 1.0f);
+	float3 v1Normal = modelM * this->normal[0];
+	float3 v2Normal = modelM * this->normal[1];
+	float3 v3Normal = modelM * this->normal[2];
 
 	float3 ambientColor(0.1f, 0.1f, 0.1f);
-	float3 toLight = (-dLight.GetDirection()).Normalize();
-	float intensityDirectional = std::max(0.0f, toLight.Dot(normal));
 
 	float3 tcolor1(colors[0].x, colors[0].y, colors[0].z);
 	float3 tcolor2(colors[1].x, colors[1].y, colors[1].z);
@@ -131,14 +120,22 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 
 				// Ambient color
 				float3 ambient = ambientColor * color;
+				
+				float3 normal = (v1Normal * lam1 + v2Normal * lam2 + v3Normal*lam3).Normalize();
 
+				float3 toLight = (-dLight.GetDirection()).Normalize();
+				float intensityDirectional = std::max(0.0f, toLight.Dot(normal));
+				
 				// Color of directional
 				float3 diffuseDirectional = dLight.GetColor() * color * intensityDirectional;
 				
+
+
 				// POINT DIFFUSE
 				float3 lightDirection = ((vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3) - pLight.GetPosition()).Normalize();
 				float pDiffuse = std::max(0.0f, (-normal.Dot(lightDirection)));
-				float3 pDiffColor = pLight.GetColor() * pDiffuse * color;
+				float attenuation = (1.0f / (0.025f * ((vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3) - pLight.GetPosition()).Length() * ((vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3) - pLight.GetPosition()).Length()));
+				float3 pDiffColor = pLight.GetColor() * pDiffuse * color * attenuation;
 
 				// POINT SPECULAR
 				float specularStrength = 0.5f;
@@ -146,9 +143,11 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 
 				float3 reflectDir = lightDirection.Reflect(normal).Normalize();
 				float spec = std::pow(std::max(-viewDir.Dot(reflectDir), 0.0f), 24);
-				float3 pSpecColor = specularColor * color * spec * specularStrength;
+				float3 pSpecColor = pLight.GetSpecularColor() * color * spec * specularStrength;
 
 				float3 finalColor = ambient + pDiffColor + pSpecColor;
+
+				//float3 finalColor = ambient + diffuseDirectional;
 
 				float r = finalColor.x * 255;
 				float g = finalColor.y * 255;

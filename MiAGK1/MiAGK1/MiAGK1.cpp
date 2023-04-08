@@ -72,28 +72,28 @@ int main()
     float4 color3( 0.0f, 0.0f, 1.0f, 1.0f );
 
     // Triangles
-    DirectionalLight light(float3(0.0f, -1.0f, 0.0f), float3(1.0f, 1.0f, 1.0f));
-    PointLight pLight1(float3(2.0f, -5.0f, 5.0f), float3(0.5f, 0.5f, 0.5f), 1.0f, 250.0f, 1.0f, 0.14f, 0.07f);
+    DirectionalLight light(float3(-1.0f, 0.0f, 0.0f), float3(1.0f, 1.0f, 1.0f));
+    PointLight pLight1(float3(2.0f, -5.0f, 5.0f), float3(0.5f, 0.5f, 0.5f), float3(1.0f, 1.0f, 1.0f), 1.0f, 250.0f, 1.0f, 0.14f, 0.07f);
 
 
     float4x4 s1modelMatrix;               // Model to world
     s1modelMatrix = s1modelMatrix.Identity();
-
+    
     float3 s1translation(0.0f, 0.0f, 0.0f);
     s1modelMatrix = s1modelMatrix * s1modelMatrix.multByTanslation(s1translation);
-
+    
     float s1angle = 0;
     float3 s1axis(0.0f, 0.0f, 1.0f);
     s1modelMatrix = s1modelMatrix * s1modelMatrix.multByRotation(s1angle, s1axis);
-
+    
     float3 s1scale(1.0f, 1.0f, 1.0f);
     s1modelMatrix = s1modelMatrix * s1modelMatrix.multByScale(s1scale);
-
+    
     float4x4 s1mvp;                       // Model - View - Projection
     s1mvp = projectionMatrix * camMatrix * s1modelMatrix;
-
-    SimpleSphere s1(float3(3.0f, 3.0f, 5.0f), 1.0f, 16, 16);
-    s1.Draw(buffer, depthBuffer, s1mvp, light, s1modelMatrix, pLight1, eye);
+    
+    SimpleSphere s1(float3(3.0f, 3.0f, 5.0f), 1.0f, 6, 6);
+    s1.Draw(buffer, depthBuffer, s1mvp, light, s1modelMatrix, pLight1, eye, center);
 
 
 
@@ -117,8 +117,8 @@ int main()
     float4x4 c1mvp;
     c1mvp = projectionMatrix * camMatrix * c1modelMatrix;
 
-    SimpleCone c1(float3(0.0f, 0.0f, 0.0f   ), 0.3f, 1, 16);
-    c1.Draw(buffer, depthBuffer, c1mvp, light, c1modelMatrix, pLight1, eye);
+    SimpleCone c1(float3(0.0f, 0.0f, 0.0f   ), 0.3f, 1, 6);
+    c1.Draw(buffer, depthBuffer, c1mvp, light, c1modelMatrix, pLight1, eye, center);
 
     float4x4 s2modelMatrix;
     s2modelMatrix = s2modelMatrix.Identity();
@@ -140,8 +140,8 @@ int main()
     float4x4 s2mvp;
     s2mvp = projectionMatrix * camMatrix * s2modelMatrix;
      
-    SimpleSphere s2(float3(-2.0f, 2.0f, 5.0f), 1.0f, 16, 16);
-    s2.Draw(buffer, depthBuffer, s2mvp, light, s2modelMatrix, pLight1, eye);
+    SimpleSphere s2(float3(-2.0f, 2.0f, 5.0f), 1.0f, 6, 6);
+    s2.Draw(buffer, depthBuffer, s2mvp, light, s2modelMatrix, pLight1, eye, center);
 
     buffer.Save();
     buffer.Display();
