@@ -1,9 +1,10 @@
 #include "DirectionalLight.h"
 
-DirectionalLight::DirectionalLight(float3 dir, float3 col)
+DirectionalLight::DirectionalLight(float3 dir, float3 col, float3 specCol)
 {
 	direction = dir;
 	color = col;
+	specularColor = specCol;
 }
 
 DirectionalLight::DirectionalLight()
@@ -20,4 +21,9 @@ float3 DirectionalLight::GetDirection()
 float3 DirectionalLight::GetColor()
 {
 	return color;
+}
+
+float3 DirectionalLight::GetSpecularColor()
+{
+	return specularColor;
 }

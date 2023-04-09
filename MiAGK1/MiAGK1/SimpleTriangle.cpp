@@ -75,15 +75,88 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 	if (dy23 < 0 || (dy23 == 0 && dx23 > 0)) tl2 = true;
 	if (dy31 < 0 || (dy31 == 0 && dx31 > 0)) tl3 = true;
 
+	// FRAGMENTOWE = ZAPIS W PETLI
+
+	// Change colors to vec3
+	float3 tcolor1(colors[0].x, colors[0].y, colors[0].z);
+	float3 tcolor2(colors[1].x, colors[1].y, colors[1].z);
+	float3 tcolor3(colors[2].x, colors[2].y, colors[2].z);
+
+	// Modify normals using model matrix (to work on rotated objects)
 	float3 v1Normal = modelM * this->normal[0];
 	float3 v2Normal = modelM * this->normal[1];
 	float3 v3Normal = modelM * this->normal[2];
 
+	// Base color of ambient light
 	float3 ambientColor(0.1f, 0.1f, 0.1f);
+	// Final ambient
+	float3 ambient(0.0f, 0.0f, 0.0f);
 
-	float3 tcolor1(colors[0].x, colors[0].y, colors[0].z);
-	float3 tcolor2(colors[1].x, colors[1].y, colors[1].z);
-	float3 tcolor3(colors[2].x, colors[2].y, colors[2].z);
+	float3 toLight = (-dLight.GetDirection()).Normalize();
+	float3 viewDir = (cameraTarget - cameraPosition).Normalize();
+
+	float specularStrength = 0.5f;
+	bool isVertices = false;
+	
+	// Calculate light for each of the vertices
+	if (isVertices)
+	{
+		// Direct diffuse
+		float3 dDiffuse1 = dLight.GetColor() * tcolor1 * std::max(0.0f, toLight.Dot(v1Normal));
+		float3 dDiffuse2 = dLight.GetColor() * tcolor2 * std::max(0.0f, toLight.Dot(v2Normal));
+		float3 dDiffuse3 = dLight.GetColor() * tcolor3 * std::max(0.0f, toLight.Dot(v3Normal));
+
+		// Direct specular
+		float3 dReflect1 = dLight.GetDirection().Reflect(v1Normal).Normalize();
+		float3 dReflect2 = dLight.GetDirection().Reflect(v2Normal).Normalize();
+		float3 dReflect3 = dLight.GetDirection().Reflect(v3Normal).Normalize();
+		float dSpec1 = std::pow(std::max(-viewDir.Dot(dReflect1), 0.0f), 24);
+		float dSpec2 = std::pow(std::max(-viewDir.Dot(dReflect2), 0.0f), 24);
+		float dSpec3 = std::pow(std::max(-viewDir.Dot(dReflect3), 0.0f), 24);
+		float3 dSpecColor1 = dLight.GetSpecularColor() * dSpec1 * specularStrength;
+		float3 dSpecColor2 = dLight.GetSpecularColor() * dSpec2 * specularStrength;
+		float3 dSpecColor3 = dLight.GetSpecularColor() * dSpec3 * specularStrength;
+
+
+		// Point diffuse
+		float3 lightDirection1 = (vertices[0] - pLight.GetPosition()).Normalize();
+		float3 lightDirection2 = (vertices[1] - pLight.GetPosition()).Normalize();
+		float3 lightDirection3 = (vertices[2] - pLight.GetPosition()).Normalize();
+		float pDiffuse1 = std::max(0.0f, (-v1Normal.Dot(lightDirection1)));
+		float pDiffuse2 = std::max(0.0f, (-v2Normal.Dot(lightDirection2)));
+		float pDiffuse3 = std::max(0.0f, (-v3Normal.Dot(lightDirection3)));
+		float3 pDiffColor1 = pLight.GetColor() * tcolor1 * pDiffuse1;
+		float3 pDiffColor2 = pLight.GetColor() * tcolor2 * pDiffuse2;
+		float3 pDiffColor3 = pLight.GetColor() * tcolor3 * pDiffuse3;
+
+		// Point specular
+		float3 pReflectDir1 = lightDirection1.Reflect(v1Normal).Normalize();
+		float3 pReflectDir2 = lightDirection2.Reflect(v2Normal).Normalize();
+		float3 pReflectDir3 = lightDirection3.Reflect(v3Normal).Normalize();
+
+		float pSpec1 = std::pow(std::max(-viewDir.Dot(pReflectDir1), 0.0f), 24);
+		float pSpec2 = std::pow(std::max(-viewDir.Dot(pReflectDir2), 0.0f), 24);
+		float pSpec3 = std::pow(std::max(-viewDir.Dot(pReflectDir3), 0.0f), 24);
+
+		float3 pSpecColor1 = pLight.GetSpecularColor() * pSpec1 * specularStrength;
+		float3 pSpecColor2 = pLight.GetSpecularColor() * pSpec2 * specularStrength;
+		float3 pSpecColor3 = pLight.GetSpecularColor() * pSpec3 * specularStrength;
+
+
+
+		// Sum up the whole color
+		//tcolor1 = dDiffuse1 + dSpecColor1;
+		//tcolor2 = dDiffuse2 + dSpecColor2;
+		//tcolor3 = dDiffuse3 + dSpecColor3;
+
+		//tcolor1 = pDiffColor1 + pSpecColor1;
+		//tcolor2 = pDiffColor2 + pSpecColor2;
+		//tcolor3 = pDiffColor3 + pSpecColor3;
+
+		tcolor1 = dDiffuse1 + dSpecColor1 + pDiffColor1 + pSpecColor1;
+		tcolor2 = dDiffuse2 + dSpecColor2 + pDiffColor2 + pSpecColor2;
+		tcolor3 = dDiffuse3 + dSpecColor3 + pDiffColor3 + pSpecColor3;
+	}
 
 	for (int x = 0; x < w; x++)
 	{
@@ -118,36 +191,49 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 				// Color from vertices and lambdas
 				float3 color = tcolor1 * lam1 + tcolor2 * lam2 + tcolor3 * lam3;
 
-				// Ambient color
+				// Final ambient color calculation
 				float3 ambient = ambientColor * color;
 				
-				float3 normal = (v1Normal * lam1 + v2Normal * lam2 + v3Normal*lam3).Normalize();
+				// Final color always have ambient
+				float3 finalColor = ambient;
 
-				float3 toLight = (-dLight.GetDirection()).Normalize();
-				float intensityDirectional = std::max(0.0f, toLight.Dot(normal));
-				
-				// Color of directional
-				float3 diffuseDirectional = dLight.GetColor() * color * intensityDirectional;
-				
+				// If only count on vertices -> everything saved to color
+				if (isVertices)
+				{
+					finalColor = finalColor + color;
+				}
+				else
+				{
+					// Calculate normal in current triangle fragment
+					float3 normal = (v1Normal * lam1 + v2Normal * lam2 + v3Normal * lam3).Normalize();
 
+					// Direct diffuse
+					float3 dDiffuse = dLight.GetColor() * color * std::max(0.0f, toLight.Dot(normal));
 
-				// POINT DIFFUSE
-				float3 lightDirection = ((vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3) - pLight.GetPosition()).Normalize();
-				float pDiffuse = std::max(0.0f, (-normal.Dot(lightDirection)));
-				float attenuation = (1.0f / (0.025f * ((vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3) - pLight.GetPosition()).Length() * ((vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3) - pLight.GetPosition()).Length()));
-				float3 pDiffColor = pLight.GetColor() * pDiffuse * color * attenuation;
+					// Direct specular
+					float3 dReflect = dLight.GetDirection().Reflect(normal).Normalize();
+					float dSpec = std::pow(std::max(-viewDir.Dot(dReflect), 0.0f), 24);
+					float3 dSpecColor = dLight.GetSpecularColor() * dSpec * specularStrength;
 
-				// POINT SPECULAR
-				float specularStrength = 0.5f;
-				float3 viewDir = (cameraTarget - cameraPosition).Normalize();
+					// Point diffuse
+					float3 lightDirection = ((vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3) - pLight.GetPosition()).Normalize();
+					float pDiffuse = std::max(0.0f, (-normal.Dot(lightDirection)));
+					float3 pDiffColor = pLight.GetColor() * pDiffuse * color;
 
-				float3 reflectDir = lightDirection.Reflect(normal).Normalize();
-				float spec = std::pow(std::max(-viewDir.Dot(reflectDir), 0.0f), 24);
-				float3 pSpecColor = pLight.GetSpecularColor() * color * spec * specularStrength;
+					// Point specular
+					float specularStrength = 0.5f;
+					float3 viewDir = (cameraTarget - cameraPosition).Normalize();
 
-				float3 finalColor = ambient + pDiffColor + pSpecColor;
+					float3 reflectDir = lightDirection.Reflect(normal).Normalize();
+					float spec = std::pow(std::max(-viewDir.Dot(reflectDir), 0.0f), 24);
+					float3 pSpecColor = pLight.GetSpecularColor() * color * spec * specularStrength;
 
-				//float3 finalColor = ambient + diffuseDirectional;
+					//finalColor = finalColor + dDiffuse + dSpecColor;
+					
+					//finalColor = finalColor + pDiffColor + pSpecColor;
+
+					finalColor = finalColor + dDiffuse + dSpecColor + pDiffColor + pSpecColor;
+				}
 
 				float r = finalColor.x * 255;
 				float g = finalColor.y * 255;
