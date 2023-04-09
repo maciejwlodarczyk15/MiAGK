@@ -1,6 +1,6 @@
 #include "SimpleTriangle.h"
 
-SimpleTriangle::SimpleTriangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, float4 c3, float3 n1, float3 n2, float3 n3)
+SimpleTriangle::SimpleTriangle(float3 v1, float3 v2, float3 v3, float4 c1, float4 c2, float4 c3, float3 n1, float3 n2, float3 n3, float2 t1, float2 t2, float2 t3)
 {
 	vertices[0] = v1;
 	vertices[1] = v2;
@@ -11,9 +11,18 @@ SimpleTriangle::SimpleTriangle(float3 v1, float3 v2, float3 v3, float4 c1, float
 	normal[0] = n1;
 	normal[1] = n2;
 	normal[2] = n3;
+	textures[0] = t1;
+	textures[1] = t2;
+	textures[2] = t3;
+	//std::cout << "\n";
+	//textures[0].WriteToConsole();
+	//std::cout << "\n";
+	//textures[1].WriteToConsole();
+	//std::cout << "\n";
+	//textures[2].WriteToConsole();
 }
 
-void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition, float3 cameraTarget)
+void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition, float3 cameraTarget, Buffer tBuffer)
 {
 	int w = buff.GetWidth();
 	int h = buff.GetHeight();
@@ -191,6 +200,22 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 				// Color from vertices and lambdas
 				float3 color = tcolor1 * lam1 + tcolor2 * lam2 + tcolor3 * lam3;
 
+				float2 texture = textures[0] * lam1 + textures[1] * lam2 + textures[2] * lam3;
+
+				if (texture.y < 0.0f) texture.y = 0.0f;
+				if (texture.y > 1.0f) texture.y = 1.0f;
+				if (texture.x < 0.0f) texture.x = 0.0f;
+				if (texture.x > 1.0f) texture.x = 1.0f;
+				unsigned int oldColor = tBuffer.GetColor(texture.y * (tBuffer.GetHeight() - 1) * (tBuffer.GetWidth() - 1) + texture.x * (tBuffer.GetWidth() -1));
+
+				float h = ((oldColor >> 16) & 0xFF) / 255.0f;
+				float j = ((oldColor >> 8) & 0xFF) / 255.0f;
+				float k = (oldColor & 0xFF) / 255.0f;
+
+				float3 textureColor(h, j, k);
+
+				color = textureColor;
+
 				// Final ambient color calculation
 				float3 ambient = ambientColor * color;
 				
@@ -232,7 +257,8 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 					
 					//finalColor = finalColor + pDiffColor + pSpecColor;
 
-					finalColor = finalColor + dDiffuse + dSpecColor + pDiffColor + pSpecColor;
+					//finalColor = finalColor + dDiffuse + dSpecColor + pDiffColor + pSpecColor;
+					finalColor = color;
 				}
 
 				float r = finalColor.x * 255;

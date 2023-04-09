@@ -1,6 +1,22 @@
 #pragma once
 #include <iostream>
 
+struct float2
+{
+	float x, y;
+	float2(): x(0.0), y(0.0f) {}
+	float2(float x, float y): x(x), y(y) {}
+	float2 operator*(float o)
+	{
+		return float2(x * o, y * o);
+	}
+	float2 operator+(float2 o)
+	{
+		return float2(x + o.x, y + o.y);
+	}
+	void WriteToConsole();
+};
+
 struct float3
 {
 	float x, y, z;

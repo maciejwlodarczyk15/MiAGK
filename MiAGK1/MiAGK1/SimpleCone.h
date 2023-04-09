@@ -15,12 +15,15 @@ private:
 	int vertexNumber;
 	std::vector<float3> vertices;
 	std::vector<float3> normals;
+	std::vector<float2> textures;
 
 public:
 	SimpleCone(float3 pos, float r, float h, int vNumber);
 
-	void Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition, float3 cameraTarget);
+	void Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition, float3 cameraTarget, Buffer tBuffer);
 
 	void CalculateNormals();
+
+	void CalculateTextures();
 };
 

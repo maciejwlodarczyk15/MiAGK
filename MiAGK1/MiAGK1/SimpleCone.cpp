@@ -25,6 +25,8 @@ SimpleCone::SimpleCone(float3 pos, float r, float h, int vNumber)
 	}
 
 	CalculateNormals();
+
+	CalculateTextures();
 }
 
 void SimpleCone::CalculateNormals()
@@ -68,7 +70,28 @@ void SimpleCone::CalculateNormals()
 	}
 }
 
-void SimpleCone::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition, float3 cameraTarget)
+void SimpleCone::CalculateTextures()
+{
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		float x = vertices[i].x;
+		float y = vertices[i].y;
+		float z = vertices[i].z;
+
+		float phi = atan2f(z, x);
+		float theta = acosf(y / sqrt(x * x + y * y + z * z));
+		
+		float u = phi / (2 * M_PI) + 0.5f;
+		float v = theta / M_PI;
+
+		//float u = std::abs((x - position.x + height * 0.5) / (height));
+		//float v = std::abs((y - position.y + height * 0.5) / (height));
+
+		textures.push_back(float2(u, v));
+	}
+}
+
+void SimpleCone::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition, float3 cameraTarget, Buffer tBuffer)
 {
 	// Colors
 	float4 c(0.0f, 1.0f, 0.0f, 1.0f);
@@ -82,17 +105,17 @@ void SimpleCone::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalL
 		v1 = 0;
 		v2 = (i + 1) % vertexNumber + 2;
 		v3 = i + 2;
-		SimpleTriangle triangle1(vertices[v1], vertices[v2], vertices[v3], c, c, c, normals[v1], normals[v2], normals[v3]);
+		SimpleTriangle triangle1(vertices[v1], vertices[v2], vertices[v3], c, c, c, normals[v1], normals[v2], normals[v3], textures[v1], textures[v2], textures[v3]);
 
 		// Base triangles
 		v1 = 1;
 		v2 = i + 2;
 		v3 = (i + 1) % vertexNumber + 2;
-		SimpleTriangle triangle2(vertices[v1], vertices[v2], vertices[v3], c, c, c, normals[v1], normals[v2], normals[v3]);
+		SimpleTriangle triangle2(vertices[v1], vertices[v2], vertices[v3], c, c, c, normals[v1], normals[v2], normals[v3], textures[v1], textures[v2], textures[v3]);
 		
 		counter += 2;
 
-		triangle1.Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition, cameraTarget);
-		triangle2.Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition, cameraTarget);
+		triangle1.Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition, cameraTarget, tBuffer);
+		triangle2.Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition, cameraTarget, tBuffer);
 	}
 }

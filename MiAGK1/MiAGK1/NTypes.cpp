@@ -180,3 +180,8 @@ void int3::WriteToConsole()
 {
     std::cout << "(" << x << ", " << y << ", " << z << ")";
 }
+
+void float2::WriteToConsole()
+{
+    std::cout << "(" << x << ", " << y << ")";
+}
