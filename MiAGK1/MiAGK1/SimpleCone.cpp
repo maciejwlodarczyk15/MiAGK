@@ -91,7 +91,7 @@ void SimpleCone::CalculateTextures()
 	}
 }
 
-void SimpleCone::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition, float3 cameraTarget, Buffer tBuffer)
+void SimpleCone::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition, float3 cameraTarget, Buffer tBuffer, bool isLit)
 {
 	// Colors
 	float4 c(0.0f, 1.0f, 0.0f, 1.0f);
@@ -115,7 +115,7 @@ void SimpleCone::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalL
 		
 		counter += 2;
 
-		triangle1.Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition, cameraTarget, tBuffer);
-		triangle2.Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition, cameraTarget, tBuffer);
+		triangle1.Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition, cameraTarget, tBuffer, isLit);
+		triangle2.Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition, cameraTarget, tBuffer, isLit);
 	}
 }

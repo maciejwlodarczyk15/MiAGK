@@ -33,7 +33,7 @@ SimpleSphere::SimpleSphere(float3 pos, float r, int v, int h)
 	CalculateTextures();
 }
 
-void SimpleSphere::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition, float3 cameraTarget, Buffer tBuffer)
+void SimpleSphere::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition, float3 cameraTarget, Buffer tBuffer, bool isLit)
 {
 	// Colors
 	int v1 = 0;
@@ -51,7 +51,7 @@ void SimpleSphere::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directiona
 				v1 = 0;
 				v2 = (j + 1) % vert + 2;
 				v3 = j + 2;
-				SimpleTriangle(vertices[v1], vertices[v2], vertices[v3], c, c, c, normals[v1], normals[v2], normals[v3], textures[v1], textures[v2], textures[v3]).Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition, cameraTarget, tBuffer);
+				SimpleTriangle(vertices[v1], vertices[v2], vertices[v3], c, c, c, normals[v1], normals[v2], normals[v3], textures[v1], textures[v2], textures[v3]).Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition, cameraTarget, tBuffer, isLit);
 			}
 			// Bottom layer
 			if (i == horiz - 1)
@@ -59,7 +59,7 @@ void SimpleSphere::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directiona
 				v1 = 1;
 				v2 = j + 2 + (horiz - 1) * vert;
 				v3 = (j + 1) % vert + 2 + (horiz - 1) * vert;
-				SimpleTriangle(vertices[v1], vertices[v2], vertices[v3], c, c, c, normals[v1], normals[v2], normals[v3], textures[v1], textures[v2], textures[v3]).Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition, cameraTarget, tBuffer);
+				SimpleTriangle(vertices[v1], vertices[v2], vertices[v3], c, c, c, normals[v1], normals[v2], normals[v3], textures[v1], textures[v2], textures[v3]).Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition, cameraTarget, tBuffer, isLit);
 			}
 
 			// Walls
@@ -69,8 +69,8 @@ void SimpleSphere::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directiona
 				v2 = 2 + (j + 1) % vert + i * vert;
 				v3 = 2 + j + (i + 1) * vert;
 				v4 = 2 + (j + 1) % vert + (i + 1) * vert;
-				SimpleTriangle(vertices[v1], vertices[v2], vertices[v3], c, c, c, normals[v1], normals[v2], normals[v3], textures[v1], textures[v2], textures[v3]).Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition, cameraTarget, tBuffer);
-				SimpleTriangle(vertices[v4], vertices[v3], vertices[v2], c, c, c, normals[v4], normals[v3], normals[v2], textures[v4], textures[v3], textures[v2]).Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition, cameraTarget, tBuffer);
+				SimpleTriangle(vertices[v1], vertices[v2], vertices[v3], c, c, c, normals[v1], normals[v2], normals[v3], textures[v1], textures[v2], textures[v3]).Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition, cameraTarget, tBuffer, isLit);
+				SimpleTriangle(vertices[v4], vertices[v3], vertices[v2], c, c, c, normals[v4], normals[v3], normals[v2], textures[v4], textures[v3], textures[v2]).Draw(buff, dBuff, matrix, dLight, modelM, pLight, cameraPosition, cameraTarget, tBuffer, isLit);
 			}
 		}
 	}

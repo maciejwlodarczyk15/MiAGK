@@ -16,7 +16,7 @@ SimpleTriangle::SimpleTriangle(float3 v1, float3 v2, float3 v3, float4 c1, float
 	textures[2] = t3;
 }
 
-void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition, float3 cameraTarget, Buffer tBuffer)
+void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition, float3 cameraTarget, Buffer tBuffer, bool isLit)
 {
 	int w = buff.GetWidth();
 	int h = buff.GetHeight();
@@ -213,49 +213,47 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 				float3 finalColor = textureColor;
 
 				//// Final ambient color calculation
-				//float3 ambient = ambientColor * color;
+				float3 ambient = ambientColor * textureColor;
 				//
 				//// Final color always have ambient
-				//float3 finalColor = ambient;
-				//
 				//// If only count on vertices -> everything saved to color
 				//if (isVertices)
 				//{
 				//	finalColor = finalColor + color;
 				//}
 				//else
-				//{
-				//	// Calculate normal in current triangle fragment
-				//	float3 normal = (v1Normal * lam1 + v2Normal * lam2 + v3Normal * lam3).Normalize();
-				//
-				//	// Direct diffuse
-				//	float3 dDiffuse = dLight.GetColor() * color * std::max(0.0f, toLight.Dot(normal));
-				//
-				//	// Direct specular
-				//	float3 dReflect = dLight.GetDirection().Reflect(normal).Normalize();
-				//	float dSpec = std::pow(std::max(-viewDir.Dot(dReflect), 0.0f), 24);
-				//	float3 dSpecColor = dLight.GetSpecularColor() * dSpec * specularStrength;
-				//
-				//	// Point diffuse
-				//	float3 lightDirection = ((vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3) - pLight.GetPosition()).Normalize();
-				//	float pDiffuse = std::max(0.0f, (-normal.Dot(lightDirection)));
-				//	float3 pDiffColor = pLight.GetColor() * pDiffuse * color;
-				//
-				//	// Point specular
-				//	float specularStrength = 0.5f;
-				//	float3 viewDir = (cameraTarget - cameraPosition).Normalize();
-				//
-				//	float3 reflectDir = lightDirection.Reflect(normal).Normalize();
-				//	float spec = std::pow(std::max(-viewDir.Dot(reflectDir), 0.0f), 24);
-				//	float3 pSpecColor = pLight.GetSpecularColor() * color * spec * specularStrength;
-				//
-				//	//finalColor = finalColor + dDiffuse + dSpecColor;
-				//	
-				//	//finalColor = finalColor + pDiffColor + pSpecColor;
-				//
-				//	//finalColor = finalColor + dDiffuse + dSpecColor + pDiffColor + pSpecColor;
-				//	finalColor = color;
-				//}
+				if (isLit)
+				{
+					// Calculate normal in current triangle fragment
+					float3 normal = (v1Normal * lam1 + v2Normal * lam2 + v3Normal * lam3).Normalize();
+				
+					// Direct diffuse
+					float3 dDiffuse = dLight.GetColor() * textureColor * std::max(0.0f, toLight.Dot(normal));
+				
+					// Direct specular
+					float3 dReflect = dLight.GetDirection().Reflect(normal).Normalize();
+					float dSpec = std::pow(std::max(-viewDir.Dot(dReflect), 0.0f), 24);
+					float3 dSpecColor = dLight.GetSpecularColor() * dSpec * specularStrength;
+				
+					// Point diffuse
+					float3 lightDirection = ((vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3) - pLight.GetPosition()).Normalize();
+					float pDiffuse = std::max(0.0f, (-normal.Dot(lightDirection)));
+					float3 pDiffColor = pLight.GetColor() * pDiffuse * textureColor;
+				
+					// Point specular
+					float specularStrength = 0.5f;
+					float3 viewDir = (cameraTarget - cameraPosition).Normalize();
+				
+					float3 reflectDir = lightDirection.Reflect(normal).Normalize();
+					float spec = std::pow(std::max(-viewDir.Dot(reflectDir), 0.0f), 24);
+					float3 pSpecColor = pLight.GetSpecularColor() * textureColor * spec * specularStrength;
+				
+					//finalColor = finalColor + dDiffuse + dSpecColor;
+					
+					//finalColor = finalColor + pDiffColor + pSpecColor;
+				
+					finalColor = ambient + finalColor + dDiffuse + dSpecColor + pDiffColor + pSpecColor;
+				}
 
 				float r = finalColor.x * 255;
 				float g = finalColor.y * 255;
@@ -269,8 +267,6 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 				a = (a < 0) ? 0 : ((a > 255) ? 255 : a);
 
 				unsigned int colorValue = ((unsigned int)a << 24) | ((unsigned int)r << 16) | ((unsigned int)g << 8) | (unsigned int)b;
-
-				colorValue = color;
 
 				// Z-buffer
 				if (depth < dBuff.GetColor(y * w + x))

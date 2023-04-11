@@ -99,7 +99,7 @@ int main()
     s1mvp = projectionMatrix * camMatrix * s1modelMatrix;
     
     SimpleSphere s1(float3(3.0f, 3.0f, 5.0f), 1.0f, 8, 8);
-    s1.Draw(buffer, depthBuffer, s1mvp, light, s1modelMatrix, pLight1, eye, center, textureBuffer1);
+    s1.Draw(buffer, depthBuffer, s1mvp, light, s1modelMatrix, pLight1, eye, center, textureBuffer1, false);
     
     
     
@@ -124,7 +124,7 @@ int main()
     c1mvp = projectionMatrix * camMatrix * c1modelMatrix;
     
     SimpleCone c1(float3(0.0f, 0.0f, 0.0f), 0.3f, 1, 16);
-    c1.Draw(buffer, depthBuffer, c1mvp, light, c1modelMatrix, pLight1, eye, center, textureBuffer2);
+    c1.Draw(buffer, depthBuffer, c1mvp, light, c1modelMatrix, pLight1, eye, center, textureBuffer2, true);
     
     float4x4 s2modelMatrix;
     s2modelMatrix = s2modelMatrix.Identity();
@@ -147,7 +147,7 @@ int main()
     s2mvp = projectionMatrix * camMatrix * s2modelMatrix;
      
     SimpleSphere s2(float3(-2.0f, 2.0f, 5.0f), 1.0f, 16, 16);
-    s2.Draw(buffer, depthBuffer, s2mvp, light, s2modelMatrix, pLight1, eye, center, textureBuffer2);
+    s2.Draw(buffer, depthBuffer, s2mvp, light, s2modelMatrix, pLight1, eye, center, textureBuffer2, true);
 
 
     buffer.Save("nazwapliku.tga");
