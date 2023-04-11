@@ -70,7 +70,7 @@ int main()
     textureBuffer1.Load("earth.tga");
     
     Buffer textureBuffer2(width, height);
-    textureBuffer2.Load("earth.tga");
+    textureBuffer2.Load("Brick.tga");
 
     // Colors (red, green, blue)
     float4 color1( 1.0f, 0.0f, 0.0f, 1.0f );
@@ -99,7 +99,7 @@ int main()
     s1mvp = projectionMatrix * camMatrix * s1modelMatrix;
     
     SimpleSphere s1(float3(3.0f, 3.0f, 5.0f), 1.0f, 8, 8);
-    s1.Draw(buffer, depthBuffer, s1mvp, light, s1modelMatrix, pLight1, eye, center, textureBuffer1, false);
+    s1.Draw(buffer, depthBuffer, s1mvp, light, s1modelMatrix, pLight1, eye, center, textureBuffer2, false);
     
     
     
@@ -124,7 +124,7 @@ int main()
     c1mvp = projectionMatrix * camMatrix * c1modelMatrix;
     
     SimpleCone c1(float3(0.0f, 0.0f, 0.0f), 0.3f, 1, 16);
-    c1.Draw(buffer, depthBuffer, c1mvp, light, c1modelMatrix, pLight1, eye, center, textureBuffer2, true);
+    c1.Draw(buffer, depthBuffer, c1mvp, light, c1modelMatrix, pLight1, eye, center, textureBuffer1, true);
     
     float4x4 s2modelMatrix;
     s2modelMatrix = s2modelMatrix.Identity();
