@@ -98,7 +98,7 @@ int main()
     float4x4 s1mvp;                       // Model - View - Projection
     s1mvp = projectionMatrix * camMatrix * s1modelMatrix;
     
-    SimpleSphere s1(float3(3.0f, 3.0f, 5.0f), 1.0f, 16, 16);
+    SimpleSphere s1(float3(3.0f, 3.0f, 5.0f), 1.0f, 8, 8);
     s1.Draw(buffer, depthBuffer, s1mvp, light, s1modelMatrix, pLight1, eye, center, textureBuffer1);
     
     
@@ -150,6 +150,6 @@ int main()
     s2.Draw(buffer, depthBuffer, s2mvp, light, s2modelMatrix, pLight1, eye, center, textureBuffer2);
 
 
-    buffer.Save(); 
+    buffer.Save("nazwapliku.tga");
     buffer.Display();
 }

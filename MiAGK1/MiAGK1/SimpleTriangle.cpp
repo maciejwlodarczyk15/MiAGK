@@ -14,12 +14,6 @@ SimpleTriangle::SimpleTriangle(float3 v1, float3 v2, float3 v3, float4 c1, float
 	textures[0] = t1;
 	textures[1] = t2;
 	textures[2] = t3;
-	//std::cout << "\n";
-	//textures[0].WriteToConsole();
-	//std::cout << "\n";
-	//textures[1].WriteToConsole();
-	//std::cout << "\n";
-	//textures[2].WriteToConsole();
 }
 
 void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, DirectionalLight dLight, float4x4 modelM, PointLight pLight, float3 cameraPosition, float3 cameraTarget, Buffer tBuffer)
@@ -197,69 +191,71 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 
 			if (topleft1 && topleft2 && topleft3)
 			{
-				// Color from vertices and lambdas
-				float3 color = tcolor1 * lam1 + tcolor2 * lam2 + tcolor3 * lam3;
+				float2 uv1 = textures[0];
+				float2 uv2 = textures[1];
+				float2 uv3 = textures[2];
 
-				float2 texture = textures[0] * lam1 + textures[1] * lam2 + textures[2] * lam3;
+				float2 uv = uv1 * lam1 + uv2 * lam2 + uv3 * lam3;
 
-				if (texture.y < 0.0f) texture.y = 0.0f;
-				if (texture.y > 1.0f) texture.y = 1.0f;
-				if (texture.x < 0.0f) texture.x = 0.0f;
-				if (texture.x > 1.0f) texture.x = 1.0f;
-				unsigned int oldColor = tBuffer.GetColor(texture.y * (tBuffer.GetHeight() - 1) * (tBuffer.GetWidth() - 1) + texture.x * (tBuffer.GetWidth() -1));
+				if (uv.x < 0.0f) uv.x = 0.0f;
+				if (uv.x > 1.0f) uv.x = 1.0f;
+				if (uv.y < 0.0f) uv.y = 0.0f;
+				if (uv.y > 1.0f) uv.y = 1.0f;
 
-				float h = ((oldColor >> 16) & 0xFF) / 255.0f;
-				float j = ((oldColor >> 8) & 0xFF) / 255.0f;
-				float k = (oldColor & 0xFF) / 255.0f;
+				unsigned int color = tBuffer.GetColor(std::llround(uv.x * tBuffer.GetWidth()) + std::llround(uv.y * tBuffer.GetHeight()) * tBuffer.GetWidth());
 
-				float3 textureColor(h, j, k);
+				float3 textureColor = float3(
+					((color >> 16) & 0xFF) / 255.0f,
+					((color >> 8) & 0xFF) / 255.0f,
+					(color & 0xFF) / 255.0f
+				);
 
-				color = textureColor;
+				float3 finalColor = textureColor;
 
-				// Final ambient color calculation
-				float3 ambient = ambientColor * color;
-				
-				// Final color always have ambient
-				float3 finalColor = ambient;
-
-				// If only count on vertices -> everything saved to color
-				if (isVertices)
-				{
-					finalColor = finalColor + color;
-				}
-				else
-				{
-					// Calculate normal in current triangle fragment
-					float3 normal = (v1Normal * lam1 + v2Normal * lam2 + v3Normal * lam3).Normalize();
-
-					// Direct diffuse
-					float3 dDiffuse = dLight.GetColor() * color * std::max(0.0f, toLight.Dot(normal));
-
-					// Direct specular
-					float3 dReflect = dLight.GetDirection().Reflect(normal).Normalize();
-					float dSpec = std::pow(std::max(-viewDir.Dot(dReflect), 0.0f), 24);
-					float3 dSpecColor = dLight.GetSpecularColor() * dSpec * specularStrength;
-
-					// Point diffuse
-					float3 lightDirection = ((vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3) - pLight.GetPosition()).Normalize();
-					float pDiffuse = std::max(0.0f, (-normal.Dot(lightDirection)));
-					float3 pDiffColor = pLight.GetColor() * pDiffuse * color;
-
-					// Point specular
-					float specularStrength = 0.5f;
-					float3 viewDir = (cameraTarget - cameraPosition).Normalize();
-
-					float3 reflectDir = lightDirection.Reflect(normal).Normalize();
-					float spec = std::pow(std::max(-viewDir.Dot(reflectDir), 0.0f), 24);
-					float3 pSpecColor = pLight.GetSpecularColor() * color * spec * specularStrength;
-
-					//finalColor = finalColor + dDiffuse + dSpecColor;
-					
-					//finalColor = finalColor + pDiffColor + pSpecColor;
-
-					//finalColor = finalColor + dDiffuse + dSpecColor + pDiffColor + pSpecColor;
-					finalColor = color;
-				}
+				//// Final ambient color calculation
+				//float3 ambient = ambientColor * color;
+				//
+				//// Final color always have ambient
+				//float3 finalColor = ambient;
+				//
+				//// If only count on vertices -> everything saved to color
+				//if (isVertices)
+				//{
+				//	finalColor = finalColor + color;
+				//}
+				//else
+				//{
+				//	// Calculate normal in current triangle fragment
+				//	float3 normal = (v1Normal * lam1 + v2Normal * lam2 + v3Normal * lam3).Normalize();
+				//
+				//	// Direct diffuse
+				//	float3 dDiffuse = dLight.GetColor() * color * std::max(0.0f, toLight.Dot(normal));
+				//
+				//	// Direct specular
+				//	float3 dReflect = dLight.GetDirection().Reflect(normal).Normalize();
+				//	float dSpec = std::pow(std::max(-viewDir.Dot(dReflect), 0.0f), 24);
+				//	float3 dSpecColor = dLight.GetSpecularColor() * dSpec * specularStrength;
+				//
+				//	// Point diffuse
+				//	float3 lightDirection = ((vertices[0] * lam1 + vertices[1] * lam2 + vertices[2] * lam3) - pLight.GetPosition()).Normalize();
+				//	float pDiffuse = std::max(0.0f, (-normal.Dot(lightDirection)));
+				//	float3 pDiffColor = pLight.GetColor() * pDiffuse * color;
+				//
+				//	// Point specular
+				//	float specularStrength = 0.5f;
+				//	float3 viewDir = (cameraTarget - cameraPosition).Normalize();
+				//
+				//	float3 reflectDir = lightDirection.Reflect(normal).Normalize();
+				//	float spec = std::pow(std::max(-viewDir.Dot(reflectDir), 0.0f), 24);
+				//	float3 pSpecColor = pLight.GetSpecularColor() * color * spec * specularStrength;
+				//
+				//	//finalColor = finalColor + dDiffuse + dSpecColor;
+				//	
+				//	//finalColor = finalColor + pDiffColor + pSpecColor;
+				//
+				//	//finalColor = finalColor + dDiffuse + dSpecColor + pDiffColor + pSpecColor;
+				//	finalColor = color;
+				//}
 
 				float r = finalColor.x * 255;
 				float g = finalColor.y * 255;
@@ -274,6 +270,8 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 
 				unsigned int colorValue = ((unsigned int)a << 24) | ((unsigned int)r << 16) | ((unsigned int)g << 8) | (unsigned int)b;
 
+				colorValue = color;
+
 				// Z-buffer
 				if (depth < dBuff.GetColor(y * w + x))
 				{
@@ -284,3 +282,5 @@ void SimpleTriangle::Draw(Buffer& buff, Buffer& dBuff, float4x4 matrix, Directio
 		}
 	}
 }
+
+

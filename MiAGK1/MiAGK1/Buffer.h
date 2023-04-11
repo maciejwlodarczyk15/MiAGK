@@ -20,7 +20,7 @@ public:
 
 	void Display();
 
-	bool Save();
+	bool Save(const char* filename);
 
 	void ClearDepthBuffer();
 
@@ -29,7 +29,6 @@ public:
 
 	unsigned int GetColor(int index);
 	void SetColor(int index, unsigned int value);
-	void SetColor(int index, float value);
 
 	bool Load(const char* fileName);
 };

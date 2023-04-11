@@ -16,14 +16,14 @@ Buffer::Buffer()
 	SetSize(800, 600);
 }
 
-bool Buffer::Save()
+bool Buffer::Save(const char* filename)
 {
 	unsigned short header[9] = {
 		0x0000, 0x0002, 0x0000, 0x0000, 0x0000, 0x0000,
 		0x0100, 0x0100,
 		0x0820};
 	
-	FILE* f = fopen("nazwapliku.tga", "wb+");
+	FILE* f = fopen(filename, "wb+");
 	if (NULL == f) return false;
 
 	header[6] = w;
@@ -105,11 +105,6 @@ void Buffer::SetColor(int index, unsigned int value)
 	color[index] = value;
 }
 
-void Buffer::SetColor(int index, float value)
-{
-	color[index] = value;
-}
-
 bool Buffer::Load(const char* filename)
 {
 	unsigned short header[9] = {
@@ -125,8 +120,6 @@ bool Buffer::Load(const char* filename)
 	SetSize(header[6], header[7]);
 
 	fread(color, 4, size, f);
-
-	
 
 	return true;
 }
